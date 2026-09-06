@@ -3,444 +3,1136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>2 күндүк акысыз сабак</title>
+<title>AI SABAK — 2 күндүк акысыз сабак</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap');
+
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-    min-height: 100vh;
-    background: #f5f1e8;
-    font-family: Georgia, "Times New Roman", serif;
-    overflow: hidden;
+  margin: 0;
+  background: #f7f6f1;
+  color: #25352a;
+  font-family: 'Montserrat', sans-serif;
+  overflow-x: hidden;
 }
 
-/* ===== ЭКРАН С КОНВЕРТОМ ===== */
-
-.start {
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    background: #f5f1e8;
-
-    transition: opacity 1s ease;
+.hidden {
+  display: none !important;
 }
 
-.start.hide {
-    opacity: 0;
-    pointer-events: none;
+/* =====================
+   КОНВЕРТ
+===================== */
+
+#envelopeScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background:
+    radial-gradient(circle at 20% 20%, #dfe8df, transparent 35%),
+    radial-gradient(circle at 80% 80%, #d6e1d1, transparent 35%),
+    #f5f4ed;
+  transition: opacity 1s ease, visibility 1s ease;
 }
 
-.envelope-box {
-    width: 330px;
-    max-width: 82vw;
+#envelopeScreen.opened {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
 
-    cursor: pointer;
-    text-align: center;
+.envelope-wrapper {
+  width: min(88vw, 390px);
+  text-align: center;
+}
 
-    animation: floating 3s ease-in-out infinite;
+.small-top {
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: #6d8167;
+  margin-bottom: 25px;
 }
 
 .envelope {
-    position: relative;
-
-    width: 100%;
-    aspect-ratio: 1.5;
-
-    background: #d8c5a5;
-
-    border-radius: 5px;
-
-    box-shadow:
-        0 25px 60px rgba(70,55,35,.22);
-
-    overflow: visible;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1.55;
+  background: #fffdf7;
+  box-shadow: 0 20px 50px rgba(45, 63, 45, .18);
+  cursor: pointer;
+  overflow: visible;
+  transition: transform .3s ease;
 }
 
-/* письмо внутри */
-
-.paper {
-    position: absolute;
-
-    z-index: 2;
-
-    left: 8%;
-    bottom: 5%;
-
-    width: 84%;
-    height: 90%;
-
-    background: #fffdf8;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    text-align: center;
-
-    padding: 20px;
-
-    transition:
-        transform 1.2s ease;
+.envelope:hover {
+  transform: translateY(-5px);
 }
 
-.paper-text {
-    color: #354438;
+.envelope-body {
+  position: absolute;
+  inset: 0;
+  background: #fffdf7;
+  border: 1px solid #e8e3d5;
 }
-
-.paper-small {
-    font-family: Arial, sans-serif;
-
-    font-size: 11px;
-
-    letter-spacing: 3px;
-
-    margin-bottom: 12px;
-}
-
-.paper-title {
-    font-size: 22px;
-}
-
-/* верхняя часть конверта */
 
 .flap {
-    position: absolute;
-
-    z-index: 4;
-
-    top: 0;
-    left: 0;
-
-    width: 0;
-    height: 0;
-
-    border-left: 165px solid transparent;
-    border-right: 165px solid transparent;
-    border-top: 125px solid #bda783;
-
-    transform-origin: top center;
-
-    transition:
-        transform 1.2s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 55%;
+  background: #f1eee4;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  z-index: 3;
+  transform-origin: top;
+  transition: transform 1s ease;
+  border-top: 1px solid #e2ded2;
 }
 
-/* нижняя складка */
-
-.envelope::before {
-    content: "";
-
-    position: absolute;
-
-    z-index: 3;
-
-    left: 0;
-    bottom: 0;
-
-    width: 0;
-    height: 0;
-
-    border-left: 165px solid transparent;
-    border-right: 165px solid transparent;
-    border-bottom: 120px solid #cbb58f;
+.envelope.open .flap {
+  transform: rotateX(180deg);
 }
 
-/* открытие */
-
-.envelope-box.open .flap {
-    transform: rotateX(180deg);
+.seal {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: 53%;
+  transform: translate(-50%, -50%);
+  width: 62px;
+  height: 62px;
+  border-radius: 50%;
+  background: #80966d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 26px;
+  box-shadow: 0 6px 15px rgba(50,70,50,.25);
+  transition: opacity .5s;
 }
 
-.envelope-box.open .paper {
-    transform: translateY(-75%);
+.envelope.open .seal {
+  opacity: 0;
 }
 
-/* подсказка */
-
-.hint {
-    margin-top: 35px;
-
-    font-family: Arial, sans-serif;
-
-    font-size: 12px;
-
-    letter-spacing: 3px;
-
-    color: #817664;
-
-    text-transform: uppercase;
-
-    animation: pulse 2s infinite;
+.envelope-title {
+  position: absolute;
+  top: 22%;
+  width: 100%;
+  z-index: 4;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(28px, 8vw, 43px);
+  color: #46653e;
 }
 
-
-/* ===== ОСНОВНОЙ САЙТ ===== */
-
-.main {
-    min-height: 100vh;
-
-    opacity: 0;
-
-    transition:
-        opacity 1.5s ease;
-
-    overflow-y: auto;
+.envelope-text {
+  position: absolute;
+  bottom: 16%;
+  width: 100%;
+  z-index: 4;
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: #536253;
 }
 
-.main.show {
-    opacity: 1;
+.open-text {
+  margin-top: 30px;
+  color: #5f7359;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+/* =====================
+   ОСНОВНОЙ САЙТ
+===================== */
+
+#main {
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+#main.show {
+  opacity: 1;
+}
+
+section {
+  position: relative;
+  padding: 75px 22px;
+  overflow: hidden;
 }
 
 .hero {
-    min-height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-
-    justify-content: center;
-    align-items: center;
-
-    text-align: center;
-
-    padding: 40px 25px;
-
-    background: #fffdf8;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background:
+    radial-gradient(circle at 10% 20%, #dce7db, transparent 25%),
+    radial-gradient(circle at 90% 80%, #dbe4d4, transparent 30%),
+    #f7f6f1;
 }
 
-.small-title {
-    font-family: Arial, sans-serif;
-
-    font-size: 11px;
-
-    letter-spacing: 4px;
-
-    color: #8b806e;
-
-    margin-bottom: 25px;
-
-    text-transform: uppercase;
+.hero-content {
+  max-width: 650px;
 }
 
-.hero h1 {
-    font-size: 48px;
-
-    font-weight: 400;
-
-    line-height: 1.05;
-
-    color: #354438;
+.eyebrow {
+  color: #829576;
+  letter-spacing: 4px;
+  font-size: 12px;
+  margin-bottom: 25px;
 }
 
-.hero h1 span {
-    font-style: italic;
-
-    color: #7c8e72;
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 500;
+  font-size: clamp(58px, 15vw, 105px);
+  line-height: .82;
+  margin: 0;
+  color: #3d5d36;
 }
 
-.hero p {
-    max-width: 500px;
-
-    margin-top: 25px;
-
-    font-size: 18px;
-
-    line-height: 1.7;
-
-    color: #66645e;
+.hero-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(26px, 7vw, 48px);
+  margin: 30px 0;
 }
 
-.date {
-    margin-top: 40px;
-
-    font-family: Arial, sans-serif;
-
-    font-size: 18px;
-
-    letter-spacing: 2px;
-
-    color: #354438;
+.date-big {
+  font-size: 18px;
+  letter-spacing: 4px;
+  margin-top: 25px;
 }
 
-
-/* ===== АНИМАЦИЯ ===== */
-
-@keyframes floating {
-
-    0%,100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-
+.online {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 9px 22px;
+  border-radius: 30px;
+  background: #7f966e;
+  color: white;
+  font-size: 12px;
+  letter-spacing: 2px;
 }
 
-@keyframes pulse {
-
-    0%,100% {
-        opacity: .4;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
+.leaves {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
 
+.leaf {
+  position: absolute;
+  width: 13px;
+  height: 7px;
+  background: #b9c49d;
+  border-radius: 100% 0 100% 0;
+  opacity: .65;
+  animation: fall linear infinite;
+}
 
-/* ===== ТЕЛЕФОН ===== */
+@keyframes fall {
+  from {
+    transform: translateY(-100px) rotate(0deg);
+  }
+  to {
+    transform: translateY(110vh) rotate(360deg);
+  }
+}
+
+/* =====================
+   ТЕКСТ
+===================== */
+
+.title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(42px, 11vw, 72px);
+  line-height: .95;
+  text-align: center;
+  color: #47663e;
+  margin: 0 0 35px;
+}
+
+.text {
+  max-width: 650px;
+  margin: auto;
+  text-align: center;
+  font-size: 16px;
+  line-height: 1.9;
+  color: #48544a;
+}
+
+/* =====================
+   ПРОГРАММА
+===================== */
+
+.program {
+  background: white;
+}
+
+.cards {
+  max-width: 850px;
+  margin: auto;
+  display: grid;
+  gap: 15px;
+}
+
+.card {
+  padding: 28px 24px;
+  border: 1px solid #dfe4d9;
+  background: #f8f8f3;
+  border-radius: 20px;
+  transition: transform .3s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card-number {
+  color: #81966e;
+  font-size: 13px;
+  letter-spacing: 2px;
+}
+
+.card h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 31px;
+  margin: 8px 0;
+  color: #3d5c37;
+}
+
+.card p {
+  margin: 0;
+  line-height: 1.7;
+  color: #687066;
+}
+
+/* =====================
+   ДАТА
+===================== */
+
+.calendar-section {
+  text-align: center;
+}
+
+.calendar {
+  max-width: 380px;
+  margin: auto;
+  background: white;
+  padding: 28px 20px;
+  border-radius: 25px;
+  box-shadow: 0 15px 45px rgba(60,75,60,.1);
+}
+
+.month {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+  color: #4b683f;
+  margin-bottom: 20px;
+}
+
+.weekdays,
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.weekdays {
+  color: #92998f;
+  font-size: 11px;
+  margin-bottom: 10px;
+}
+
+.day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 14px;
+}
+
+.selected {
+  background: #7f966e;
+  color: white;
+  box-shadow: 0 5px 12px rgba(80,100,70,.25);
+}
+
+.time {
+  margin-top: 25px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  color: #47643d;
+}
+
+/* =====================
+   ТАЙМЕР
+===================== */
+
+.countdown-section {
+  background: #526b4c;
+  color: white;
+  text-align: center;
+}
+
+.countdown-section .title {
+  color: white;
+}
+
+.countdown {
+  max-width: 650px;
+  margin: 40px auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.counter {
+  padding: 20px 5px;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 15px;
+}
+
+.counter strong {
+  display: block;
+  font-size: clamp(25px, 8vw, 42px);
+  font-weight: 500;
+}
+
+.counter span {
+  font-size: 10px;
+  letter-spacing: 1px;
+  opacity: .8;
+}
+
+/* =====================
+   ONLINE
+===================== */
+
+.online-section {
+  text-align: center;
+  background: #f8f7f0;
+}
+
+.online-box {
+  max-width: 600px;
+  margin: auto;
+  padding: 45px 25px;
+  background: white;
+  border-radius: 25px;
+  box-shadow: 0 15px 50px rgba(50,70,50,.08);
+}
+
+.online-icon {
+  font-size: 45px;
+  margin-bottom: 15px;
+}
+
+.button {
+  display: inline-block;
+  margin-top: 25px;
+  padding: 15px 35px;
+  background: #7e956d;
+  color: white;
+  text-decoration: none;
+  border-radius: 30px;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform .2s, background .2s;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+}
+
+/* =====================
+   ФОРМА
+===================== */
+
+.form-section {
+  background: white;
+}
+
+.form {
+  max-width: 600px;
+  margin: auto;
+}
+
+.question {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 25px 0 15px;
+  color: #374638;
+}
+
+.option {
+  display: block;
+  padding: 16px 18px;
+  margin: 10px 0;
+  border: 1px solid #d9ded5;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.option:hover {
+  background: #f3f5ee;
+}
+
+.option input {
+  margin-right: 10px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 17px;
+  border: 1px solid #cfd6ca;
+  border-radius: 13px;
+  font-family: inherit;
+  font-size: 15px;
+  outline: none;
+}
+
+input[type="text"]:focus {
+  border-color: #7e956d;
+}
+
+.submit {
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* =====================
+   FOOTER
+===================== */
+
+footer {
+  padding: 50px 20px;
+  text-align: center;
+  background: #3d5139;
+  color: white;
+}
+
+footer strong {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+}
+
+footer p {
+  opacity: .75;
+  font-size: 12px;
+}
+
+/* =====================
+   MUSIC BUTTON
+===================== */
+
+.music-button {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,.7);
+  background: rgba(75,96,68,.85);
+  color: white;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 5px 20px rgba(0,0,0,.15);
+}
 
 @media(max-width:600px) {
+  section {
+    padding: 65px 18px;
+  }
 
-    .envelope-box {
-        width: 300px;
-    }
+  .countdown {
+    gap: 6px;
+  }
 
-    .flap {
-        border-left-width: 150px;
-        border-right-width: 150px;
-        border-top-width: 112px;
-    }
-
-    .envelope::before {
-        border-left-width: 150px;
-        border-right-width: 150px;
-        border-bottom-width: 110px;
-    }
-
-    .hero h1 {
-        font-size: 40px;
-    }
-
+  .counter {
+    padding: 15px 3px;
+  }
 }
 </style>
 </head>
 
-
 <body>
 
+<!-- =====================
+     КОНВЕРТ
+===================== -->
 
-<!-- ===== КОНВЕРТ ===== -->
+<div id="envelopeScreen">
 
-<div class="start" id="start">
+  <div class="envelope-wrapper">
 
-    <div class="envelope-box" id="envelopeBox">
+    <div class="small-top">AI MEKTEP PRESENTS</div>
 
-        <div class="envelope">
+    <div class="envelope" id="envelope">
 
-            <div class="paper">
+      <div class="envelope-body"></div>
 
-                <div class="paper-text">
+      <div class="flap"></div>
 
-                    <div class="paper-small">
-                        Сиздерди чакырабыз
-                    </div>
+      <div class="envelope-title">
+        AI SABAK
+      </div>
 
-                    <div class="paper-title">
-                        2 күндүк акысыз сабак
-                    </div>
+      <div class="seal">AI</div>
 
-                </div>
-
-            </div>
-
-            <div class="flap"></div>
-
-        </div>
-
-        <div class="hint">
-            Конвертти ачыңыз
-        </div>
+      <div class="envelope-text">
+        2 КҮНДҮК АКЫСЫЗ САБАК
+      </div>
 
     </div>
 
-</div>
+    <div class="open-text">
+      Конвертти ачуу үчүн басыңыз ✨
+    </div>
 
-
-
-<!-- ===== ОСНОВНОЙ САЙТ ===== -->
-
-<div class="main" id="main">
-
-    <section class="hero">
-
-        <div class="small-title">
-            Акысыз онлайн сабак
-        </div>
-
-        <h1>
-
-            2 күндүк<br>
-
-            <span>акысыз сабак</span>
-
-        </h1>
-
-        <p>
-
-            Сиздерди нейросети, AI жана
-            анимация боюнча 2 күндүк
-            акысыз онлайн сабакка чакырабыз.
-
-        </p>
-
-        <div class="date">
-
-            8–9 СЕНТЯБРЬ · 11:00 · ОНЛАЙН
-
-        </div>
-
-    </section>
+  </div>
 
 </div>
 
+
+<!-- МУЗЫКА -->
+
+<audio id="music" loop preload="auto">
+  <source src="HOME Resonance.m4a" type="audio/mp4">
+</audio>
+
+
+<!-- =====================
+     ОСНОВНОЙ САЙТ
+===================== -->
+
+<main id="main">
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <div class="leaves"></div>
+
+  <div class="hero-content">
+
+    <div class="eyebrow">
+      СИЗДИ ЧАКЫРАБЫЗ
+    </div>
+
+    <h1>AI<br>SABAK</h1>
+
+    <div class="hero-subtitle">
+      2 күндүк акысыз сабак
+    </div>
+
+    <p class="text">
+      Нейросетилердин жардамы менен
+      заманбап контент түзүүнү жана
+      сүрөттөрдү анимациялоону үйрөнөбүз.
+    </p>
+
+    <div class="date-big">
+      08 — 09 СЕНТЯБРЬ · 11:00
+    </div>
+
+    <div class="online">
+      ONLINE
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ПРИГЛАШЕНИЕ -->
+
+<section>
+
+  <h2 class="title">
+    Сизди күтүп жатабыз
+  </h2>
+
+  <p class="text">
+    Эки күн бою нейросетилер менен иштөөнүн
+    эң кызыктуу мүмкүнчүлүктөрүн чогуу карап,
+    реалдуу контент түзүп көрөбүз.
+  </p>
+
+</section>
+
+
+<!-- ПРОГРАММА -->
+
+<section class="program">
+
+  <h2 class="title">
+    Сабакта эмне болот?
+  </h2>
+
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-number">01 / NEURAL NETWORKS</div>
+      <h3>Нейросети</h3>
+      <p>
+        Контент түзүүдө нейросетилерди туура
+        колдонуу жана эффективдүү промпттар.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-number">02 / AI CONTENT</div>
+      <h3>AI-контент</h3>
+      <p>
+        Соцтармактар үчүн заманбап визуалдарды
+        жана идеяларды AI менен түзөбүз.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-number">03 / ANIMATION</div>
+      <h3>Анимация</h3>
+      <p>
+        Статикалык сүрөттөрдү жандандырып,
+        кыймылдуу AI-визуалдарды жасайбыз.
+      </p>
+    </div>
+
+    <div class="card">
+      <div class="card-number">04 / PRACTICE</div>
+      <h3>Практика</h3>
+      <p>
+        Теория менен гана чектелбей,
+        сабак учурунда өз контентибизди түзөбүз.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- КАЛЕНДАРЬ -->
+
+<section class="calendar-section">
+
+  <h2 class="title">
+    Дата
+  </h2>
+
+  <p class="text">
+    Эки күндүк акысыз сабак
+  </p>
+
+  <div class="calendar">
+
+    <div class="month">
+      СЕНТЯБРЬ 2026
+    </div>
+
+    <div class="weekdays">
+      <div>ДШ</div>
+      <div>ШШ</div>
+      <div>ШР</div>
+      <div>БШ</div>
+      <div>ЖМ</div>
+      <div>ИШ</div>
+      <div>ЖК</div>
+    </div>
+
+    <div class="days">
+
+      <div></div>
+      <div></div>
+      <div>1</div>
+      <div>2</div>
+      <div>3</div>
+      <div>4</div>
+      <div>5</div>
+
+      <div>6</div>
+      <div>7</div>
+      <div class="day selected">8</div>
+      <div class="day selected">9</div>
+      <div>10</div>
+      <div>11</div>
+      <div>12</div>
+
+      <div>13</div>
+      <div>14</div>
+      <div>15</div>
+      <div>16</div>
+      <div>17</div>
+      <div>18</div>
+      <div>19</div>
+
+      <div>20</div>
+      <div>21</div>
+      <div>22</div>
+      <div>23</div>
+      <div>24</div>
+      <div>25</div>
+      <div>26</div>
+
+      <div>27</div>
+      <div>28</div>
+      <div>29</div>
+      <div>30</div>
+
+    </div>
+
+    <div class="time">
+      11:00
+    </div>
+
+    <div>
+      ONLINE · 2 КҮН
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ТАЙМЕР -->
+
+<section class="countdown-section">
+
+  <h2 class="title">
+    Сабакка чейин
+  </h2>
+
+  <div class="countdown">
+
+    <div class="counter">
+      <strong id="days">00</strong>
+      <span>КҮН</span>
+    </div>
+
+    <div class="counter">
+      <strong id="hours">00</strong>
+      <span>СААТ</span>
+    </div>
+
+    <div class="counter">
+      <strong id="minutes">00</strong>
+      <span>МҮНӨТ</span>
+    </div>
+
+    <div class="counter">
+      <strong id="seconds">00</strong>
+      <span>СЕКУНД</span>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ONLINE -->
+
+<section class="online-section">
+
+  <div class="online-box">
+
+    <div class="online-icon">🤖</div>
+
+    <h2 class="title">
+      ONLINE
+    </h2>
+
+    <p class="text">
+      Сабакка катышуу үчүн бардык керектүү
+      маалыматтар сизге алдын ала жөнөтүлөт.
+    </p>
+
+    <a href="#form" class="button">
+      КАТЫШАМ
+    </a>
+
+  </div>
+
+</section>
+
+
+<!-- ФОРМА -->
+
+<section class="form-section" id="form">
+
+  <h2 class="title">
+    Катышасызбы?
+  </h2>
+
+  <div class="form">
+
+    <div class="question">
+      Сабакка катышасызбы?
+    </div>
+
+    <label class="option">
+      <input type="radio" name="participate" value="Ооба, катышам">
+      Ооба, катышам 🤍
+    </label>
+
+    <label class="option">
+      <input type="radio" name="participate" value="Катыша албайм">
+      Катыша албайм
+    </label>
+
+    <div class="question">
+      Атыңыз ким?
+    </div>
+
+    <input
+      type="text"
+      id="name"
+      placeholder="Атыңызды жазыңыз"
+    >
+
+    <button class="button submit" onclick="sendForm()">
+      ЖӨНӨТҮҮ
+    </button>
+
+  </div>
+
+</section>
+
+
+<footer>
+
+  <strong>AI SABAK</strong>
+
+  <p>
+    8–9 СЕНТЯБРЬ · 11:00 · ONLINE
+  </p>
+
+  <p>
+    AI MEKTEP
+  </p>
+
+</footer>
+
+</main>
+
+
+<!-- МУЗЫКА -->
+
+<button class="music-button hidden" id="musicButton">
+  🔊
+</button>
 
 
 <script>
 
-const envelopeBox =
-    document.getElementById("envelopeBox");
+/* =====================
+   КОНВЕРТ + МУЗЫКА
+===================== */
 
-const start =
-    document.getElementById("start");
+const envelope = document.getElementById("envelope");
+const envelopeScreen = document.getElementById("envelopeScreen");
+const main = document.getElementById("main");
+const music = document.getElementById("music");
+const musicButton = document.getElementById("musicButton");
 
-const main =
-    document.getElementById("main");
+envelope.addEventListener("click", function() {
 
+  envelope.classList.add("open");
 
-envelopeBox.addEventListener("click", function() {
+  /* музыка начинается после действия пользователя */
+  music.play().catch(function(error) {
+    console.log("Музыку нужно запустить после нажатия.");
+  });
 
-    /* открываем конверт */
+  setTimeout(function() {
 
-    envelopeBox.classList.add("open");
+    envelopeScreen.classList.add("opened");
 
+    main.classList.add("show");
 
-    /* через 1.4 секунды показываем сайт */
+    musicButton.classList.remove("hidden");
 
-    setTimeout(function() {
+    document.body.style.overflow = "auto";
 
-        start.classList.add("hide");
-
-        document.body.style.overflow = "auto";
-
-        main.classList.add("show");
-
-    }, 1400);
+  }, 1000);
 
 });
 
-</script>
 
+/* =====================
+   КНОПКА МУЗЫКИ
+===================== */
+
+musicButton.addEventListener("click", function() {
+
+  if (music.paused) {
+
+    music.play();
+
+    musicButton.textContent = "🔊";
+
+  } else {
+
+    music.pause();
+
+    musicButton.textContent = "🔇";
+
+  }
+
+});
+
+
+/* =====================
+   ТАЙМЕР
+===================== */
+
+/*
+  8 сентября 2026 года
+  11:00
+*/
+
+const targetDate = new Date("2026-09-08T11:00:00+06:00").getTime();
+
+function updateCountdown() {
+
+  const now = new Date().getTime();
+
+  const distance = targetDate - now;
+
+  if (distance <= 0) {
+
+    document.getElementById("days").textContent = "00";
+    document.getElementById("hours").textContent = "00";
+    document.getElementById("minutes").textContent = "00";
+    document.getElementById("seconds").textContent = "00";
+
+    return;
+  }
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+
+  const hours = Math.floor(
+    (distance % (1000 * 60 * 60 * 24)) /
+    (1000 * 60 * 60)
+  );
+
+  const minutes = Math.floor(
+    (distance % (1000 * 60 * 60)) /
+    (1000 * 60)
+  );
+
+  const seconds = Math.floor(
+    (distance % (1000 * 60)) /
+    1000
+  );
+
+  document.getElementById("days").textContent =
+    String(days).padStart(2, "0");
+
+  document.getElementById("hours").textContent =
+    String(hours).padStart(2, "0");
+
+  document.getElementById("minutes").textContent =
+    String(minutes).padStart(2, "0");
+
+  document.getElementById("seconds").textContent =
+    String(seconds).padStart(2, "0");
+}
+
+updateCountdown();
+
+setInterval(updateCountdown, 1000);
+
+
+/* =====================
+   ЛИСТЬЯ
+===================== */
+
+document.querySelectorAll(".leaves").forEach(function(container) {
+
+  for (let i = 0; i < 18; i++) {
+
+    const leaf = document.createElement("div");
+
+    leaf.className = "leaf";
+
+    leaf.style.left = Math.random() * 100 + "%";
+
+    leaf.style.animationDuration =
+      (7 + Math.random() * 10) + "s";
+
+    leaf.style.animationDelay =
+      Math.random() * 8 + "s";
+
+    container.appendChild(leaf);
+  }
+
+});
+
+
+/* =====================
+   ФОРМА
+===================== */
+
+function sendForm() {
+
+  const name =
+    document.getElementById("name").value.trim();
+
+  const choice =
+    document.querySelector(
+      'input[name="participate"]:checked'
+    );
+
+  if (!choice) {
+
+    alert("Катышууңузду тандаңыз 🤍");
+
+    return;
+
+  }
+
+  if (!name) {
+
+    alert("Атыңызды жазыңыз 🤍");
+
+    return;
+
+  }
+
+  alert(
+    "Рахмат, " +
+    name +
+    "! 🤍\n\n" +
+    choice.value +
+    "\n\nСиздин жооп кабыл алынды."
+  );
+
+}
+
+</script>
 
 </body>
 </html>
