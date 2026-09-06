@@ -3,1596 +3,797 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>AI SABAK — 2 күндүк акысыз сабак</title>
 
-<style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+<style>
+:root{
+  --black:#030609;
+  --black2:#071015;
+  --turq:#00e5d4;
+  --blue:#45c9ff;
+  --white:#f5faff;
+  --muted:#9eb0ba;
+  --glass:rgba(255,255,255,.055);
+  --border:rgba(255,255,255,.13);
+}
 
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
 
 html{
-    scroll-behavior:smooth;
+  scroll-behavior:smooth;
 }
 
 body{
-    font-family:'Manrope',sans-serif;
-    background:
-        radial-gradient(circle at 15% 10%,rgba(185,216,255,.7),transparent 30%),
-        radial-gradient(circle at 85% 15%,rgba(224,205,255,.65),transparent 28%),
-        radial-gradient(circle at 50% 80%,rgba(255,218,226,.5),transparent 35%),
-        #f5f7fa;
-    color:#18212c;
-    overflow-x:hidden;
+  background:var(--black);
+  color:var(--white);
+  font-family:"Manrope",sans-serif;
+  overflow-x:hidden;
 }
 
 body:before{
-    content:"";
-    position:fixed;
-    inset:0;
-    pointer-events:none;
-    background:
-        linear-gradient(120deg,rgba(255,255,255,.5),transparent 40%),
-        radial-gradient(circle at 50% 50%,rgba(255,255,255,.3),transparent 60%);
-    z-index:-1;
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:
+    radial-gradient(circle at 20% 20%,rgba(0,229,212,.09),transparent 30%),
+    radial-gradient(circle at 80% 60%,rgba(69,201,255,.08),transparent 30%);
+  z-index:-3;
 }
 
-/* =========================
-   INTRO / ENVELOPE
-========================= */
-
-.intro{
-    position:fixed;
-    inset:0;
-    z-index:1000;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:
-        radial-gradient(circle at 50% 40%,#e9f4ff,transparent 35%),
-        linear-gradient(135deg,#edf3f8,#f8f3f5);
-    transition:opacity 1s ease,visibility 1s ease;
+canvas{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:-2;
+  opacity:.8;
 }
 
-.intro.hide{
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
+.noise{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.035;
+  z-index:20;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.intro-content{
-    text-align:center;
+section{
+  width:100%;
+  position:relative;
 }
 
-.intro-mini{
-    font-size:11px;
-    letter-spacing:4px;
-    text-transform:uppercase;
-    color:#68788a;
-    margin-bottom:28px;
+.container{
+  width:min(1120px,calc(100% - 36px));
+  margin:auto;
 }
 
-.envelope{
-    position:relative;
-    width:310px;
-    height:205px;
-    cursor:pointer;
-    perspective:1000px;
-    filter:drop-shadow(0 30px 45px rgba(80,100,130,.22));
-    transition:transform .5s ease;
+/* MUSIC */
+
+.music-btn{
+  position:fixed;
+  top:20px;
+  right:20px;
+  z-index:50;
+  width:48px;
+  height:48px;
+  border:1px solid rgba(0,229,212,.4);
+  border-radius:50%;
+  background:rgba(3,6,9,.7);
+  backdrop-filter:blur(15px);
+  color:var(--turq);
+  cursor:pointer;
+  box-shadow:0 0 25px rgba(0,229,212,.15);
 }
 
-.envelope:hover{
-    transform:translateY(-8px) rotateX(3deg);
-}
-
-.envelope-body{
-    position:absolute;
-    inset:0;
-    background:
-        linear-gradient(145deg,rgba(255,255,255,.9),rgba(216,229,242,.75));
-    border:1px solid rgba(255,255,255,.9);
-    border-radius:22px;
-    backdrop-filter:blur(20px);
-    overflow:hidden;
-}
-
-.envelope-body:before,
-.envelope-body:after{
-    content:"";
-    position:absolute;
-    bottom:-2px;
-    width:52%;
-    height:100%;
-    background:rgba(220,232,243,.75);
-}
-
-.envelope-body:before{
-    left:0;
-    clip-path:polygon(0 0,100% 100%,0 100%);
-}
-
-.envelope-body:after{
-    right:0;
-    clip-path:polygon(100% 0,100% 100%,0 100%);
-}
-
-.flap{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:115px;
-    background:linear-gradient(145deg,#ffffff,#dce9f5);
-    clip-path:polygon(0 0,100% 0,50% 100%);
-    transform-origin:top;
-    transition:transform 1s cubic-bezier(.2,.8,.2,1);
-    z-index:5;
-    border-top-left-radius:22px;
-    border-top-right-radius:22px;
-}
-
-.envelope.open .flap{
-    transform:rotateX(180deg);
-}
-
-.envelope-label{
-    position:absolute;
-    z-index:10;
-    left:50%;
-    top:50%;
-    transform:translate(-50%,-50%);
-    width:125px;
-    height:125px;
-    border-radius:50%;
-    background:
-        linear-gradient(145deg,rgba(255,255,255,.8),rgba(222,237,250,.7));
-    border:1px solid rgba(255,255,255,.95);
-    backdrop-filter:blur(15px);
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.9),
-        0 15px 30px rgba(80,100,130,.13);
-}
-
-.envelope-label strong{
-    font-size:18px;
-    letter-spacing:2px;
-}
-
-.envelope-label span{
-    font-size:9px;
-    letter-spacing:2px;
-    color:#708092;
-    margin-top:6px;
-}
-
-.open-text{
-    margin-top:28px;
-    font-size:12px;
-    color:#6c7a89;
-    letter-spacing:1px;
-    animation:pulse 2s infinite;
-}
-
-@keyframes pulse{
-    50%{opacity:.45}
-}
-
-/* =========================
-   MUSIC
-========================= */
-
-.music-button{
-    position:fixed;
-    right:22px;
-    bottom:22px;
-    width:54px;
-    height:54px;
-    border:1px solid rgba(255,255,255,.9);
-    border-radius:50%;
-    background:rgba(255,255,255,.7);
-    backdrop-filter:blur(18px);
-    box-shadow:0 12px 30px rgba(60,80,100,.16);
-    cursor:pointer;
-    z-index:500;
-    font-size:20px;
-    color:#334456;
-    transition:.3s;
-}
-
-.music-button:hover{
-    transform:scale(1.08);
-}
-
-/* =========================
-   MAIN
-========================= */
-
-main{
-    width:100%;
-}
-
-.section{
-    width:min(1160px,92%);
-    margin:auto;
-}
-
-/* =========================
-   HERO
-========================= */
+/* HERO */
 
 .hero{
-    min-height:100vh;
-    display:flex;
-    align-items:center;
-    position:relative;
-    padding:100px 0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:70px 0;
+  overflow:hidden;
 }
 
-.hero-grid{
-    display:grid;
-    grid-template-columns:1.05fr .95fr;
-    gap:60px;
-    align-items:center;
+.hero-inner{
+  text-align:center;
+  position:relative;
 }
 
 .eyebrow{
-    font-size:11px;
-    letter-spacing:4px;
-    color:#728194;
-    margin-bottom:25px;
-    text-transform:uppercase;
-}
-
-.hero h1{
-    font-size:clamp(65px,10vw,150px);
-    line-height:.82;
-    letter-spacing:-8px;
-    font-weight:800;
-    background:linear-gradient(120deg,#172432,#607c98,#9d89ae);
-    -webkit-background-clip:text;
-    color:transparent;
-}
-
-.hero-title{
-    font-size:clamp(27px,4vw,54px);
-    line-height:1.05;
-    letter-spacing:-2px;
-    font-weight:700;
-    margin-top:32px;
-    max-width:700px;
-}
-
-.hero-text{
-    max-width:570px;
-    font-size:16px;
-    line-height:1.8;
-    color:#687687;
-    margin-top:25px;
-}
-
-.hero-meta{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top:35px;
-}
-
-.pill{
-    padding:12px 18px;
-    border-radius:100px;
-    background:rgba(255,255,255,.55);
-    border:1px solid rgba(255,255,255,.85);
-    backdrop-filter:blur(15px);
-    box-shadow:0 8px 25px rgba(80,100,120,.07);
-    font-size:12px;
-    font-weight:700;
-}
-
-/* =========================
-   3D AI OBJECT
-========================= */
-
-.ai-stage{
-    position:relative;
-    height:540px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.glow{
-    position:absolute;
-    width:360px;
-    height:360px;
-    border-radius:50%;
-    background:
-        radial-gradient(circle,#b9dcff,transparent 65%);
-    filter:blur(30px);
-    opacity:.7;
-}
-
-.ai-orb{
-    position:relative;
-    width:290px;
-    height:290px;
-    border-radius:48% 52% 45% 55%;
-    background:
-        linear-gradient(135deg,
-        rgba(255,255,255,.9),
-        rgba(188,220,246,.35),
-        rgba(207,186,232,.45));
-    border:1px solid rgba(255,255,255,.9);
-    backdrop-filter:blur(25px);
-    box-shadow:
-        inset -30px -30px 70px rgba(150,180,210,.18),
-        inset 20px 20px 40px rgba(255,255,255,.85),
-        0 40px 80px rgba(70,100,130,.16);
-    animation:float 6s ease-in-out infinite;
-}
-
-.ai-orb:before{
-    content:"";
-    position:absolute;
-    inset:35px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.75);
-}
-
-.ai-orb:after{
-    content:"AI";
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:76px;
-    font-weight:800;
-    letter-spacing:-5px;
-    color:rgba(56,80,103,.72);
-}
-
-.orbit{
-    position:absolute;
-    width:390px;
-    height:145px;
-    border:1px solid rgba(90,120,150,.22);
-    border-radius:50%;
-    transform:rotate(-25deg);
-    animation:spin 10s linear infinite;
-}
-
-.orbit:nth-child(2){
-    transform:rotate(55deg);
-    width:350px;
-    height:180px;
-    animation-duration:14s;
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:9px 16px;
+  border:1px solid rgba(0,229,212,.28);
+  border-radius:100px;
+  background:rgba(0,229,212,.045);
+  color:var(--turq);
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:2.5px;
+  margin-bottom:28px;
 }
 
 .dot{
-    position:absolute;
-    width:15px;
-    height:15px;
-    border-radius:50%;
-    background:white;
-    box-shadow:0 0 20px #9dcfff;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--turq);
+  box-shadow:0 0 12px var(--turq);
 }
 
-.dot.one{
-    top:75px;
-    right:60px;
+.portal{
+  width:min(310px,72vw);
+  height:min(310px,72vw);
+  margin:0 auto 38px;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
 }
 
-.dot.two{
-    bottom:90px;
-    left:65px;
+.portal-ring{
+  position:absolute;
+  inset:0;
+  border-radius:50%;
+  border:1px solid rgba(0,229,212,.35);
+  box-shadow:
+    0 0 35px rgba(0,229,212,.15),
+    inset 0 0 35px rgba(69,201,255,.08);
+  animation:rotate 16s linear infinite;
 }
 
-@keyframes float{
-    0%,100%{transform:translateY(0) rotate(0)}
-    50%{transform:translateY(-22px) rotate(4deg)}
+.portal-ring:before,
+.portal-ring:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  border:1px solid rgba(69,201,255,.25);
 }
 
-@keyframes spin{
-    to{transform:rotate(335deg)}
+.portal-ring:before{
+  inset:22px;
+  animation:rotateReverse 11s linear infinite;
 }
 
-/* =========================
-   INTRO STAT
-========================= */
-
-.statement{
-    padding:130px 0;
-    text-align:center;
+.portal-ring:after{
+  inset:48px;
+  border-color:rgba(0,229,212,.18);
+  animation:rotate 8s linear infinite;
 }
 
-.statement-small{
-    font-size:11px;
-    letter-spacing:4px;
-    color:#7b8998;
-    margin-bottom:30px;
+.portal-core{
+  width:48%;
+  height:48%;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 35% 30%,#ffffff 0%,#bafcff 7%,var(--turq) 22%,#063c3c 52%,#020506 75%);
+  box-shadow:
+    0 0 35px rgba(0,229,212,.55),
+    0 0 90px rgba(0,229,212,.25);
+  animation:pulse 3s ease-in-out infinite;
 }
 
-.statement h2{
-    font-size:clamp(35px,6vw,75px);
-    line-height:1;
-    letter-spacing:-4px;
-    max-width:900px;
-    margin:auto;
+.portal-label{
+  position:absolute;
+  bottom:-10px;
+  font-family:"Space Grotesk";
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--muted);
 }
 
-.statement p{
-    max-width:650px;
-    margin:30px auto 0;
-    line-height:1.8;
-    color:#718092;
+.hero h1{
+  font-family:"Space Grotesk",sans-serif;
+  font-size:clamp(43px,8vw,96px);
+  line-height:.9;
+  letter-spacing:-5px;
+  text-transform:uppercase;
 }
 
-/* =========================
-   DAYS
-========================= */
-
-.day{
-    padding:100px 0;
+.hero h1 span{
+  display:block;
 }
 
-.day-card{
-    position:relative;
-    padding:60px;
-    border-radius:42px;
-    background:rgba(255,255,255,.48);
-    border:1px solid rgba(255,255,255,.9);
-    backdrop-filter:blur(25px);
-    box-shadow:
-        0 30px 70px rgba(70,90,110,.08),
-        inset 0 1px 1px rgba(255,255,255,.9);
-    overflow:hidden;
+.hero h1 .cyan{
+  color:var(--turq);
+  text-shadow:0 0 35px rgba(0,229,212,.25);
 }
 
-.day-card:before{
-    content:"";
-    position:absolute;
-    width:350px;
-    height:350px;
-    border-radius:50%;
-    right:-120px;
-    top:-140px;
-    background:radial-gradient(circle,rgba(183,218,249,.55),transparent 70%);
+.hero-offer{
+  max-width:650px;
+  margin:30px auto 0;
+  font-size:clamp(18px,2.5vw,27px);
+  line-height:1.35;
+  font-weight:700;
 }
 
-.day-number{
-    font-size:12px;
-    letter-spacing:4px;
-    color:#7a8997;
+.hero-offer strong{
+  color:var(--turq);
 }
 
-.day-title{
-    font-size:clamp(38px,5vw,68px);
-    line-height:1;
-    letter-spacing:-3px;
-    margin-top:18px;
-    max-width:850px;
+.meta{
+  margin-top:27px;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
 }
 
-.day-description{
-    margin-top:22px;
-    max-width:700px;
-    line-height:1.8;
-    color:#6d7c8c;
+.meta span{
+  padding:10px 14px;
+  border:1px solid var(--border);
+  background:var(--glass);
+  backdrop-filter:blur(12px);
+  border-radius:8px;
+  font-family:"Space Grotesk";
+  font-size:11px;
+  letter-spacing:1.5px;
 }
 
-.lesson-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:16px;
-    margin-top:45px;
+/* COUNTDOWN */
+
+.countdown-section{
+  padding:80px 0;
 }
 
-.lesson{
-    min-height:190px;
-    padding:28px;
-    border-radius:28px;
-    background:rgba(247,250,253,.62);
-    border:1px solid rgba(255,255,255,.9);
-    transition:.4s;
-}
-
-.lesson:hover{
-    transform:translateY(-7px);
-    box-shadow:0 20px 40px rgba(80,100,120,.1);
-}
-
-.lesson-num{
-    font-size:11px;
-    letter-spacing:2px;
-    color:#8a98a6;
-}
-
-.lesson h3{
-    margin-top:25px;
-    font-size:21px;
-    line-height:1.2;
-}
-
-.lesson p{
-    margin-top:12px;
-    font-size:13px;
-    line-height:1.7;
-    color:#758392;
-}
-
-/* =========================
-   CINEMA
-========================= */
-
-.cinema{
-    padding:130px 0;
-}
-
-.cinema-box{
-    min-height:550px;
-    position:relative;
-    border-radius:45px;
-    overflow:hidden;
-    background:
-        radial-gradient(circle at 70% 20%,rgba(165,190,220,.45),transparent 28%),
-        radial-gradient(circle at 30% 80%,rgba(190,165,210,.4),transparent 30%),
-        linear-gradient(135deg,#dbe6ef,#ede8ed);
-    border:1px solid rgba(255,255,255,.9);
-    box-shadow:0 40px 90px rgba(60,80,100,.13);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-}
-
-.cinema-card{
-    width:min(720px,80%);
-    padding:55px;
-    border-radius:35px;
-    background:rgba(255,255,255,.42);
-    border:1px solid rgba(255,255,255,.75);
-    backdrop-filter:blur(25px);
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.8),
-        0 30px 60px rgba(70,80,100,.1);
-    text-align:center;
-}
-
-.cinema-card span{
-    font-size:10px;
-    letter-spacing:4px;
-    color:#738394;
-}
-
-.cinema-card h2{
-    font-size:clamp(40px,6vw,75px);
-    line-height:.95;
-    letter-spacing:-4px;
-    margin-top:25px;
-}
-
-.cinema-card p{
-    max-width:550px;
-    margin:25px auto 0;
-    line-height:1.8;
-    color:#687889;
-}
-
-/* floating glass shapes */
-
-.shape{
-    position:absolute;
-    border:1px solid rgba(255,255,255,.8);
-    background:rgba(255,255,255,.18);
-    backdrop-filter:blur(12px);
-    box-shadow:0 20px 50px rgba(70,90,110,.08);
-}
-
-.shape-a{
-    width:120px;
-    height:120px;
-    border-radius:35px;
-    left:7%;
-    top:12%;
-    transform:rotate(25deg);
-}
-
-.shape-b{
-    width:85px;
-    height:85px;
-    border-radius:50%;
-    right:10%;
-    bottom:15%;
-}
-
-.shape-c{
-    width:170px;
-    height:70px;
-    border-radius:50px;
-    right:6%;
-    top:18%;
-    transform:rotate(-25deg);
-}
-
-/* =========================
-   CALENDAR
-========================= */
-
-.calendar-section{
-    padding:110px 0;
+.section-label{
+  color:var(--turq);
+  font-family:"Space Grotesk";
+  font-size:11px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  margin-bottom:18px;
 }
 
 .section-title{
-    text-align:center;
-}
-
-.section-title span{
-    font-size:11px;
-    letter-spacing:4px;
-    color:#7a8998;
-}
-
-.section-title h2{
-    font-size:clamp(38px,6vw,70px);
-    letter-spacing:-3px;
-    margin-top:15px;
-}
-
-.calendar{
-    max-width:700px;
-    margin:50px auto 0;
-    padding:30px;
-    border-radius:35px;
-    background:rgba(255,255,255,.55);
-    border:1px solid rgba(255,255,255,.9);
-    backdrop-filter:blur(20px);
-    box-shadow:0 25px 60px rgba(80,100,120,.08);
-}
-
-.month{
-    text-align:center;
-    font-size:22px;
-    font-weight:800;
-    margin-bottom:25px;
-}
-
-.week{
-    display:grid;
-    grid-template-columns:repeat(7,1fr);
-    gap:8px;
-}
-
-.week div{
-    aspect-ratio:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    border-radius:14px;
-    font-size:13px;
-}
-
-.week .head{
-    font-size:10px;
-    color:#8794a1;
-}
-
-.active-day{
-    background:linear-gradient(135deg,#c9e5ff,#ded0ee);
-    font-weight:800;
-    box-shadow:0 10px 20px rgba(100,130,160,.12);
-}
-
-/* =========================
-   COUNTDOWN
-========================= */
-
-.countdown-section{
-    padding:120px 0;
-    text-align:center;
+  font-family:"Space Grotesk";
+  font-size:clamp(34px,6vw,70px);
+  letter-spacing:-3px;
+  line-height:1;
 }
 
 .countdown{
-    display:flex;
-    justify-content:center;
-    gap:14px;
-    margin-top:45px;
-    flex-wrap:wrap;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:35px;
 }
 
 .time-box{
-    width:125px;
-    padding:25px 15px;
-    border-radius:26px;
-    background:rgba(255,255,255,.6);
-    border:1px solid rgba(255,255,255,.9);
-    backdrop-filter:blur(18px);
+  border:1px solid var(--border);
+  background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.025));
+  backdrop-filter:blur(18px);
+  padding:30px 15px;
+  text-align:center;
+  border-radius:18px;
+  box-shadow:inset 0 1px rgba(255,255,255,.08);
 }
 
 .time-box strong{
-    display:block;
-    font-size:45px;
-    letter-spacing:-2px;
+  display:block;
+  font-family:"Space Grotesk";
+  font-size:clamp(38px,7vw,72px);
+  color:var(--white);
+  line-height:1;
 }
 
-.time-box span{
-    display:block;
-    margin-top:5px;
-    font-size:10px;
-    letter-spacing:2px;
-    color:#7d8b99;
+.time-box small{
+  color:var(--turq);
+  font-size:10px;
+  letter-spacing:2px;
+  margin-top:9px;
+  display:block;
 }
 
-/* =========================
-   RSVP
-========================= */
+/* PROGRAM */
 
-.rsvp{
-    padding:120px 0 160px;
+.program{
+  padding:90px 0;
 }
 
-.rsvp-card{
-    max-width:760px;
-    margin:auto;
-    text-align:center;
-    padding:60px;
-    border-radius:42px;
-    background:rgba(255,255,255,.55);
-    border:1px solid rgba(255,255,255,.9);
-    backdrop-filter:blur(25px);
-    box-shadow:0 30px 70px rgba(70,90,110,.1);
+.program-header{
+  margin-bottom:45px;
 }
 
-.rsvp-card h2{
-    font-size:clamp(38px,5vw,65px);
-    letter-spacing:-3px;
+.day{
+  position:relative;
+  padding:38px;
+  margin-bottom:20px;
+  border:1px solid var(--border);
+  border-radius:26px;
+  background:linear-gradient(135deg,rgba(255,255,255,.065),rgba(255,255,255,.018));
+  backdrop-filter:blur(20px);
+  overflow:hidden;
 }
 
-.rsvp-card p{
-    margin-top:18px;
-    color:#728090;
+.day:before{
+  content:"";
+  position:absolute;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  right:-100px;
+  top:-100px;
+  background:rgba(0,229,212,.1);
+  filter:blur(45px);
 }
 
-.rsvp-buttons{
-    display:flex;
-    gap:12px;
-    justify-content:center;
-    margin-top:35px;
-    flex-wrap:wrap;
+.day-number{
+  font-family:"Space Grotesk";
+  font-size:12px;
+  color:var(--turq);
+  letter-spacing:3px;
+  margin-bottom:12px;
 }
 
-.rsvp-btn{
-    border:none;
-    padding:16px 28px;
-    border-radius:100px;
-    background:#202d3a;
-    color:white;
-    font-family:inherit;
-    font-weight:700;
-    cursor:pointer;
-    transition:.3s;
+.day h3{
+  font-family:"Space Grotesk";
+  font-size:clamp(25px,4vw,42px);
+  line-height:1.05;
+  max-width:700px;
+  letter-spacing:-1.5px;
 }
 
-.rsvp-btn:hover{
-    transform:translateY(-3px);
+.date{
+  margin-top:12px;
+  color:var(--blue);
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:2px;
 }
 
-.rsvp-btn.no{
-    background:rgba(255,255,255,.75);
-    color:#4e5c6b;
-    border:1px solid rgba(220,225,230,.9);
+.lesson-list{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-top:32px;
 }
 
-.name-form{
-    display:none;
-    margin-top:25px;
+.lesson{
+  padding:23px;
+  border-radius:15px;
+  border:1px solid rgba(255,255,255,.09);
+  background:rgba(0,0,0,.22);
 }
 
-.name-form.show{
-    display:block;
+.lesson-num{
+  color:var(--turq);
+  font-family:"Space Grotesk";
+  font-size:12px;
+  font-weight:700;
 }
 
-.name-form input{
-    width:100%;
-    padding:17px 20px;
-    border-radius:18px;
-    border:1px solid rgba(190,200,210,.7);
-    background:rgba(255,255,255,.7);
-    outline:none;
-    font-family:inherit;
-    font-size:14px;
+.lesson h4{
+  margin:12px 0 8px;
+  font-size:15px;
 }
 
-.send-btn{
-    margin-top:12px;
-    width:100%;
-    padding:16px;
-    border:none;
-    border-radius:18px;
-    background:#202d3a;
-    color:white;
-    font-family:inherit;
-    font-weight:700;
-    cursor:pointer;
+.lesson p{
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.65;
 }
 
-.result{
-    margin-top:25px;
-    font-weight:700;
-    color:#556777;
+/* FINAL */
+
+.final{
+  padding:100px 0 130px;
+  text-align:center;
 }
 
-.participants{
-    margin-top:18px;
-    font-size:13px;
-    color:#84919e;
+.final-card{
+  padding:65px 30px;
+  border-radius:30px;
+  border:1px solid rgba(0,229,212,.25);
+  background:
+    radial-gradient(circle at 50% 0%,rgba(0,229,212,.12),transparent 45%),
+    rgba(255,255,255,.035);
+  backdrop-filter:blur(25px);
 }
 
-/* =========================
-   FOOTER
-========================= */
-
-footer{
-    padding:40px 20px;
-    text-align:center;
-    color:#8794a0;
-    font-size:11px;
-    letter-spacing:2px;
+.final h2{
+  font-family:"Space Grotesk";
+  font-size:clamp(40px,8vw,82px);
+  line-height:.95;
+  letter-spacing:-4px;
+  text-transform:uppercase;
 }
 
-/* =========================
-   ANIMATION
-========================= */
+.final h2 span{
+  color:var(--turq);
+}
+
+.final-buttons{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:38px;
+}
+
+.btn{
+  border:0;
+  padding:17px 25px;
+  border-radius:10px;
+  font-family:"Manrope";
+  font-weight:800;
+  cursor:pointer;
+  transition:.3s;
+}
+
+.btn-main{
+  background:var(--turq);
+  color:#00110f;
+  box-shadow:0 0 30px rgba(0,229,212,.2);
+}
+
+.btn-main:hover{
+  transform:translateY(-3px);
+  box-shadow:0 0 45px rgba(0,229,212,.4);
+}
+
+.btn-second{
+  background:rgba(255,255,255,.04);
+  color:white;
+  border:1px solid var(--border);
+}
+
+.response{
+  min-height:30px;
+  margin-top:24px;
+  color:var(--turq);
+  font-weight:700;
+}
+
+.footer{
+  margin-top:65px;
+  color:#53636b;
+  font-size:10px;
+  letter-spacing:3px;
+}
+
+/* REVEAL */
 
 .reveal{
-    opacity:0;
-    transform:translateY(35px);
-    transition:opacity .8s ease,transform .8s ease;
+  opacity:0;
+  transform:translateY(35px);
+  transition:opacity .8s ease,transform .8s ease;
 }
 
-.reveal.visible{
-    opacity:1;
-    transform:none;
+.reveal.show{
+  opacity:1;
+  transform:none;
 }
 
-/* =========================
-   MOBILE
-========================= */
-
-@media(max-width:800px){
-
-    .hero{
-        min-height:auto;
-        padding:120px 0 70px;
-    }
-
-    .hero-grid{
-        grid-template-columns:1fr;
-        gap:30px;
-    }
-
-    .hero h1{
-        font-size:72px;
-        letter-spacing:-5px;
-    }
-
-    .hero-title{
-        font-size:34px;
-    }
-
-    .ai-stage{
-        height:390px;
-    }
-
-    .ai-orb{
-        width:220px;
-        height:220px;
-    }
-
-    .ai-orb:after{
-        font-size:60px;
-    }
-
-    .orbit{
-        width:300px;
-        height:120px;
-    }
-
-    .statement{
-        padding:90px 0;
-    }
-
-    .statement h2{
-        letter-spacing:-2px;
-    }
-
-    .day{
-        padding:60px 0;
-    }
-
-    .day-card{
-        padding:30px 22px;
-        border-radius:30px;
-    }
-
-    .day-title{
-        font-size:40px;
-        letter-spacing:-2px;
-    }
-
-    .lesson-grid{
-        grid-template-columns:1fr;
-    }
-
-    .lesson{
-        min-height:auto;
-    }
-
-    .cinema{
-        padding:80px 0;
-    }
-
-    .cinema-box{
-        min-height:500px;
-        border-radius:30px;
-    }
-
-    .cinema-card{
-        padding:35px 25px;
-        width:88%;
-        border-radius:27px;
-    }
-
-    .calendar{
-        padding:18px;
-    }
-
-    .week{
-        gap:4px;
-    }
-
-    .week div{
-        border-radius:9px;
-        font-size:11px;
-    }
-
-    .time-box{
-        width:75px;
-        padding:18px 8px;
-    }
-
-    .time-box strong{
-        font-size:30px;
-    }
-
-    .rsvp-card{
-        padding:40px 22px;
-        border-radius:30px;
-    }
-
-    .envelope{
-        width:280px;
-        height:185px;
-    }
+@keyframes rotate{
+  to{transform:rotate(360deg)}
 }
 
+@keyframes rotateReverse{
+  to{transform:rotate(-360deg)}
+}
+
+@keyframes pulse{
+  0%,100%{transform:scale(.95)}
+  50%{transform:scale(1.05)}
+}
+
+@media(max-width:700px){
+
+  .hero{
+    padding:80px 0 60px;
+  }
+
+  .hero h1{
+    letter-spacing:-3px;
+  }
+
+  .countdown{
+    gap:7px;
+  }
+
+  .time-box{
+    padding:20px 8px;
+    border-radius:12px;
+  }
+
+  .time-box strong{
+    font-size:35px;
+  }
+
+  .time-box small{
+    font-size:8px;
+    letter-spacing:1px;
+  }
+
+  .day{
+    padding:25px 18px;
+    border-radius:20px;
+  }
+
+  .lesson-list{
+    grid-template-columns:1fr;
+  }
+
+  .lesson{
+    padding:20px;
+  }
+
+  .final-card{
+    padding:50px 18px;
+  }
+
+  .final h2{
+    letter-spacing:-2px;
+  }
+
+  .music-btn{
+    top:12px;
+    right:12px;
+  }
+}
 </style>
 </head>
 
-
 <body>
 
+<div class="noise"></div>
+<canvas id="neuralCanvas"></canvas>
 
-<!-- =========================
-     INTRO
-========================= -->
+<button class="music-btn" id="musicBtn" aria-label="Музыка">♪</button>
 
-<div class="intro" id="intro">
+<audio id="music" src="./music.mp3" preload="auto" loop></audio>
 
-    <div class="intro-content">
+<!-- HERO -->
 
-        <div class="intro-mini">
-            СИЗ ҮЧҮН АТАЙЫН ЧАКЫРЫК
-        </div>
+<section class="hero">
+  <div class="container hero-inner">
 
-        <div class="envelope" id="envelope">
-
-            <div class="envelope-body"></div>
-
-            <div class="flap"></div>
-
-            <div class="envelope-label">
-                <strong>AI</strong>
-                <span>SABAK</span>
-            </div>
-
-        </div>
-
-        <div class="open-text">
-            ЧАКЫРЫКТЫ АЧУУ ҮЧҮН БАСЫҢЫЗ
-        </div>
-
+    <div class="eyebrow">
+      <span class="dot"></span>
+      2 КҮНДҮК АКЫСЫЗ САБАК
     </div>
 
-</div>
-
-
-<!-- =========================
-     MUSIC
-========================= -->
-
-<audio
-    id="music"
-    src="./music.mp3"
-    preload="auto"
-    loop>
-</audio>
-
-<button
-    class="music-button"
-    id="musicBtn"
-    onclick="toggleMusic()">
-    ♪
-</button>
-
-
-<main>
-
-
-<!-- =========================
-     HERO
-========================= -->
-
-<section class="hero section">
-
-    <div class="hero-grid">
-
-        <div class="reveal">
-
-            <div class="eyebrow">
-                2 КҮНДҮК АКЫСЫЗ ОНЛАЙН САБАК
-            </div>
-
-            <h1>AI<br>SABAK</h1>
-
-            <div class="hero-title">
-                ОЮҢДАН ДАЯР<br>
-                AI-КИНОГО ЧЕЙИН
-            </div>
-
-            <p class="hero-text">
-                Нейротармактардын жардамы менен контент түзүүнү,
-                ИИ аркылуу акча табууну жана өз идеяңды
-                киного айлантууну үйрөн.
-            </p>
-
-            <div class="hero-meta">
-
-                <div class="pill">
-                    08–09 СЕНТЯБРЬ
-                </div>
-
-                <div class="pill">
-                    11:00
-                </div>
-
-                <div class="pill">
-                    ONLINE
-                </div>
-
-            </div>
-
-        </div>
-
-
-        <div class="ai-stage reveal">
-
-            <div class="glow"></div>
-
-            <div class="orbit"></div>
-            <div class="orbit"></div>
-
-            <div class="ai-orb">
-
-                <div class="dot one"></div>
-                <div class="dot two"></div>
-
-            </div>
-
-        </div>
-
+    <div class="portal" id="portal">
+      <div class="portal-ring"></div>
+      <div class="portal-core"></div>
+      <div class="portal-label">ENTER AI SABAK</div>
     </div>
 
+    <h1>
+      <span>AI SABAK</span>
+      <span>ИДЕЯҢДЫ</span>
+      <span class="cyan">AI-КОНТЕНТКЕ</span>
+      <span>АЙЛАНТ</span>
+    </h1>
+
+    <div class="hero-offer">
+      <strong>Той сезондо Love Story түзүп, акча тап</strong><br>
+      ИИ КОНТЕНТ · НЕЙРОСЕТИ
+    </div>
+
+    <div class="meta">
+      <span>08–09 СЕНТЯБРЬ</span>
+      <span>11:00</span>
+      <span>ONLINE</span>
+    </div>
+
+  </div>
 </section>
 
+<!-- COUNTDOWN -->
 
-<!-- =========================
-     STATEMENT
-========================= -->
+<section class="countdown-section reveal">
+  <div class="container">
 
-<section class="statement section reveal">
+    <div class="section-label">STARTING SOON</div>
 
-    <div class="statement-small">
-        БУЛ ЖӨН ГАНА САБАК ЭМЕС
-    </div>
-
-    <h2>
-        2 КҮНДӨ ИДЕЯҢДЫ
-        AI-КОНТЕНТКЕ
-        АЙЛАНТАСЫҢ
+    <h2 class="section-title">
+      САБАККА ЧЕЙИН
     </h2>
 
-    <p>
-        Биринчи күнү — нейротармактардын мүмкүнчүлүктөрүн
-        үйрөнөбүз. Экинчи күнү — алган билимибизди практикада
-        колдонуп, кино сыяктуу даяр видео жаратабыз.
-    </p>
-
-</section>
-
-
-<!-- =========================
-     DAY 1
-========================= -->
-
-<section class="day section reveal">
-
-    <div class="day-card">
-
-        <div class="day-number">
-            01 / БИРИНЧИ КҮН
-        </div>
-
-        <h2 class="day-title">
-            ИИ МЕНЕН ЖАҢЫ
-            МҮМКҮНЧҮЛҮКТӨР
-        </h2>
-
-        <p class="day-description">
-            Нейротармактар менен иштөөнүн негиздерин үйрөнүп,
-            идеяны даяр контентке айлантабыз.
-        </p>
-
-
-        <div class="lesson-grid">
-
-
-            <div class="lesson">
-
-                <div class="lesson-num">
-                    01
-                </div>
-
-                <h3>
-                    ИИ МЕНЕН КАНТИП
-                    АКЧА ТАПСА БОЛОТ?
-                </h3>
-
-                <p>
-                    Нейротармактарды колдонуп кызмат көрсөтүү,
-                    контент түзүү жана киреше табуу жолдорун карайбыз.
-                </p>
-
-            </div>
-
-
-            <div class="lesson">
-
-                <div class="lesson-num">
-                    02
-                </div>
-
-                <h3>
-                    AI-МУЛЬТФИЛЬМ
-                </h3>
-
-                <p>
-                    Өз идеяңды ойлоп таап, каармандарды түзүп,
-                    окуяны мультфильмге айлантабыз.
-                </p>
-
-            </div>
-
-
-            <div class="lesson">
-
-                <div class="lesson-num">
-                    03
-                </div>
-
-                <h3>
-                    AI LOVE STORY
-                </h3>
-
-                <p>
-                    Сүйүү баянын нейротармактын жардамы менен
-                    кооз визуалдык окуяга айлантабыз.
-                </p>
-
-            </div>
-
-
-            <div class="lesson">
-
-                <div class="lesson-num">
-                    04
-                </div>
-
-                <h3>
-                    ИДЕЯДАН ДАЯР
-                    КОНТЕНТКЕ ЧЕЙИН
-                </h3>
-
-                <p>
-                    Идея → каарман → сүрөт → окуя →
-                    даяр визуал. Баарын практикада жасайбыз.
-                </p>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     DAY 2
-========================= -->
-
-<section class="day section reveal">
-
-    <div class="day-card">
-
-        <div class="day-number">
-            02 / ЭКИНЧИ КҮН
-        </div>
-
-        <h2 class="day-title">
-            СЕНДИН БИРИНЧИ
-            AI-КИНОҢ
-        </h2>
-
-        <p class="day-description">
-            Бул күн толугу менен практика. Кино сыяктуу
-            кадрларды түзүп, аларды кыймылга келтирип,
-            даяр видеого айлантабыз.
-        </p>
-
-
-        <div class="lesson-grid">
-
-
-            <div class="lesson">
-
-                <div class="lesson-num">
-                    01
-                </div>
-
-                <h3>
-                    КИНОДОГУДАЙ КАДР
-                </h3>
-
-                <p>
-                    Кинематографиялык атмосферасы бар
-                    профессионалдуу кадрларды нейротармак менен жаратабыз.
-                </p>
-
-            </div>
-
-
-            <div class="lesson">
-
-                <div class="lesson-num">
-                    02
-                </div>
-
-                <h3>
-                    AI-КЛИП
-                </h3>
-
-                <p>
-                    Жараткан кадрларыбызды кыймылга келтирип,
-                    видео түзөбүз.
-                </p>
-
-            </div>
-
-
-            <div class="lesson">
-
-                <div class="lesson-num">
-                    03
-                </div>
-
-                <h3>
-                    LOVE STORY
-                    КИНО СТИЛИНДЕ
-                </h3>
-
-                <p>
-                    Сүйүү окуясын башынан аягына чейин
-                    кинематографиялык форматта жаратабыз.
-                </p>
-
-            </div>
-
-
-            <div class="lesson">
-
-                <div class="lesson-num">
-                    04
-                </div>
-
-                <h3>
-                    ДАЯР AI-ВИДЕО
-                </h3>
-
-                <p>
-                    Эки күндүн жыйынтыгында өз идеяңдан
-                    даяр AI-видео жаратып чыгасың.
-                </p>
-
-            </div>
-
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     CINEMA
-========================= -->
-
-<section class="cinema section reveal">
-
-    <div class="cinema-box">
-
-        <div class="shape shape-a"></div>
-        <div class="shape shape-b"></div>
-        <div class="shape shape-c"></div>
-
-        <div class="cinema-card">
-
-            <span>
-                FROM IDEA TO CINEMA
-            </span>
-
-            <h2>
-                СЕН ЖАРАТКАН<br>
-                AI-КИНО
-            </h2>
-
-            <p>
-                Идеяңды жөн гана сүрөт кылып калтырбай,
-                аны окуяга, кадрга жана кинематографиялык
-                видеого айлантабыз.
-            </p>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     CALENDAR
-========================= -->
-
-<section class="calendar-section section reveal">
-
-    <div class="section-title">
-
-        <span>
-            КҮНДӨРДҮ БЕЛГИЛЕП КОЙ
-        </span>
-
-        <h2>
-            СЕНТЯБРЬ 2026
-        </h2>
-
-    </div>
-
-
-    <div class="calendar">
-
-        <div class="month">
-            СЕНТЯБРЬ
-        </div>
-
-        <div class="week">
-
-            <div class="head">ДШ</div>
-            <div class="head">ШШ</div>
-            <div class="head">ШР</div>
-            <div class="head">БШ</div>
-            <div class="head">ЖМ</div>
-            <div class="head">ИШ</div>
-            <div class="head">ЖК</div>
-
-            <div>31</div>
-            <div>1</div>
-            <div>2</div>
-            <div>3</div>
-            <div>4</div>
-            <div>5</div>
-            <div>6</div>
-
-            <div>7</div>
-
-            <div class="active-day">
-                8
-            </div>
-
-            <div class="active-day">
-                9
-            </div>
-
-            <div>10</div>
-            <div>11</div>
-            <div>12</div>
-            <div>13</div>
-
-            <div>14</div>
-            <div>15</div>
-            <div>16</div>
-            <div>17</div>
-            <div>18</div>
-            <div>19</div>
-            <div>20</div>
-
-            <div>21</div>
-            <div>22</div>
-            <div>23</div>
-            <div>24</div>
-            <div>25</div>
-            <div>26</div>
-            <div>27</div>
-
-            <div>28</div>
-            <div>29</div>
-            <div>30</div>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<!-- =========================
-     COUNTDOWN
-========================= -->
-
-<section class="countdown-section section reveal">
-
-    <div class="section-title">
-
-        <span>
-            САБАККА ЧЕЙИН
-        </span>
-
-        <h2>
-            КАЛДЫ...
-        </h2>
-
-    </div>
-
-
     <div class="countdown">
+      <div class="time-box">
+        <strong id="days">00</strong>
+        <small>КҮН</small>
+      </div>
 
-        <div class="time-box">
-            <strong id="days">00</strong>
-            <span>КҮН</span>
+      <div class="time-box">
+        <strong id="hours">00</strong>
+        <small>СААТ</small>
+      </div>
+
+      <div class="time-box">
+        <strong id="minutes">00</strong>
+        <small>МҮНӨТ</small>
+      </div>
+
+      <div class="time-box">
+        <strong id="seconds">00</strong>
+        <small>СЕКУНД</small>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- PROGRAM -->
+
+<section class="program">
+  <div class="container">
+
+    <div class="program-header reveal">
+      <div class="section-label">PROGRAM</div>
+      <h2 class="section-title">2 КҮН.<br>2 ПРАКТИКА.</h2>
+    </div>
+
+    <!-- DAY 1 -->
+
+    <div class="day reveal">
+
+      <div class="day-number">01 — БИРИНЧИ КҮН</div>
+
+      <h3>
+        ИИ МЕНЕН КИРЕШЕ ЖАНА AI-КОНТЕНТ
+      </h3>
+
+      <div class="date">
+        8-СЕНТЯБРЬ · 11:00
+      </div>
+
+      <div class="lesson-list">
+
+        <div class="lesson">
+          <div class="lesson-num">01</div>
+          <h4>ИИ МЕНЕН АКЧА ТАП</h4>
+          <p>
+            Нейросетилерди колдонуп кызмат көрсөтүү,
+            контент жаратуу жана киреше табуу мүмкүнчүлүктөрү.
+          </p>
         </div>
 
-        <div class="time-box">
-            <strong id="hours">00</strong>
-            <span>СААТ</span>
+        <div class="lesson">
+          <div class="lesson-num">02</div>
+          <h4>AI-МУЛЬТФИЛЬМ</h4>
+          <p>
+            Каарман түзүп, окуя ойлоп таап,
+            аны AI-мультфильмге айлантабыз.
+          </p>
         </div>
 
-        <div class="time-box">
-            <strong id="minutes">00</strong>
-            <span>МҮНӨТ</span>
+        <div class="lesson">
+          <div class="lesson-num">03</div>
+          <h4>AI LOVE STORY</h4>
+          <p>
+            Тойго же сүйүү баянына арналган
+            өзгөчө Love Story түзөбүз.
+          </p>
         </div>
 
-        <div class="time-box">
-            <strong id="seconds">00</strong>
-            <span>СЕКУНД</span>
+        <div class="lesson">
+          <div class="lesson-num">04</div>
+          <h4>AI-КОНТЕНТ</h4>
+          <p>
+            Сүрөт, видео жана креативдерди
+            нейросетилер менен түзүүнү үйрөнөбүз.
+          </p>
         </div>
+
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+
+    <div class="day reveal">
+
+      <div class="day-number">02 — ЭКИНЧИ КҮН</div>
+
+      <h3>
+        AI CINEMA — СЕНДИН БИРИНЧИ AI-КИНОҢ
+      </h3>
+
+      <div class="date">
+        9-СЕНТЯБРЬ · 11:00
+      </div>
+
+      <div class="lesson-list">
+
+        <div class="lesson">
+          <div class="lesson-num">01</div>
+          <h4>КИНОДОГУДАЙ КАДР</h4>
+          <p>
+            Кинематографиялык жарык,
+            композиция жана атмосфера.
+          </p>
+        </div>
+
+        <div class="lesson">
+          <div class="lesson-num">02</div>
+          <h4>КАДРДЫ КЫЙМЫЛГА КЕЛТИР</h4>
+          <p>
+            AI менен сүрөттөрдү жандандырып,
+            видеого айлантабыз.
+          </p>
+        </div>
+
+        <div class="lesson">
+          <div class="lesson-num">03</div>
+          <h4>LOVE STORY — КИНО СТИЛИНДЕ</h4>
+          <p>
+            Бир нече кадрды бириктирип,
+            окуясы жана атмосферасы бар
+            Love Story жаратабыз.
+          </p>
+        </div>
+
+        <div class="lesson">
+          <div class="lesson-num">04</div>
+          <h4>ДАЯР AI-КЛИП</h4>
+          <p>
+            Кадрларды бириктирип,
+            даяр кинематографиялык AI-видео түзөбүз.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FINAL -->
+
+<section class="final reveal">
+
+  <div class="container">
+
+    <div class="final-card">
+
+      <div class="section-label">AI SABAK</div>
+
+      <h2>
+        2 КҮН.<br>
+        2 ПРАКТИКА.<br>
+        <span>1 ДАЯР AI-КОНТЕНТ.</span>
+      </h2>
+
+      <div class="final-buttons">
+
+        <button class="btn btn-main" id="yesBtn">
+          ООБА, КАТЫШАМ
+        </button>
+
+        <button class="btn btn-second" id="noBtn">
+          КАТЫША АЛБАЙМ
+        </button>
+
+      </div>
+
+      <div class="response" id="response"></div>
 
     </div>
 
-</section>
-
-
-<!-- =========================
-     RSVP
-========================= -->
-
-<section class="rsvp section reveal">
-
-    <div class="rsvp-card">
-
-        <h2>
-            КАТЫШАСЫЗБЫ?
-        </h2>
-
-        <p>
-            Эки күндүк акысыз онлайн сабакта
-            сизди күтөбүз.
-        </p>
-
-
-        <div class="rsvp-buttons">
-
-            <button
-                class="rsvp-btn"
-                onclick="showForm()">
-                ООБА, КАТЫШАМ
-            </button>
-
-            <button
-                class="rsvp-btn no"
-                onclick="notComing()">
-                КАТЫША АЛБАЙМ
-            </button>
-
-        </div>
-
-
-        <div class="name-form" id="nameForm">
-
-            <input
-                type="text"
-                id="name"
-                placeholder="Атыңызды жазыңыз">
-
-            <button
-                class="send-btn"
-                onclick="submitRSVP()">
-                КАТЫШУУНУ ЫРАСТОО
-            </button>
-
-        </div>
-
-
-        <div
-            class="result"
-            id="result">
-        </div>
-
-        <div class="participants">
-            Катышуучулар: <strong id="count">0</strong>
-        </div>
-
+    <div class="footer">
+      AI · CONTENT · CINEMA · NEURAL FUTURE
     </div>
 
+  </div>
+
 </section>
-
-
-</main>
-
-
-<footer>
-    AI SABAK · 08–09 СЕНТЯБРЬ 2026 · ONLINE
-</footer>
-
-
 
 <script>
 
@@ -1602,260 +803,272 @@ footer{
 
 const music = document.getElementById("music");
 const musicBtn = document.getElementById("musicBtn");
-const envelope = document.getElementById("envelope");
-const intro = document.getElementById("intro");
 
-let opened = false;
+let musicStarted = false;
 
+function startMusic(){
+  if(musicStarted) return;
 
-/*
-   Конвертти басканда музыка башталат.
-   Браузер колдобосо — төмөнкү музыка
-   баскычы аркылуу кайра иштетүүгө болот.
-*/
+  music.volume = 0.55;
 
-envelope.addEventListener("click", function(){
+  const playPromise = music.play();
 
-    if(opened) return;
-
-    opened = true;
-
-    envelope.classList.add("open");
-
-    music.volume = 1;
-    music.currentTime = 0;
-
-    const playPromise = music.play();
-
-    if(playPromise !== undefined){
-
-        playPromise
-        .then(function(){
-
-            musicBtn.innerHTML = "♫";
-
-        })
-        .catch(function(error){
-
-            console.log("Музыка ишке кирген жок:",error);
-
-            musicBtn.innerHTML = "▶";
-
-        });
-
-    }
-
-
-    setTimeout(function(){
-
-        intro.classList.add("hide");
-
-    },1500);
-
-});
-
-
-/* Music button */
-
-function toggleMusic(){
-
-    if(music.paused){
-
-        music.play()
-        .then(function(){
-
-            musicBtn.innerHTML = "♫";
-
-        })
-        .catch(function(){
-
-            musicBtn.innerHTML = "▶";
-
-        });
-
-    }else{
-
-        music.pause();
-
-        musicBtn.innerHTML = "♪";
-
-    }
-
+  if(playPromise !== undefined){
+    playPromise
+      .then(()=>{
+        musicStarted = true;
+        musicBtn.textContent = "♫";
+      })
+      .catch(()=>{
+        // Браузер заблокировал autoplay.
+        // Музыка запустится при первом касании.
+      });
+  }
 }
 
+function forceMusic(){
+  music.volume = 0.55;
+  music.play()
+    .then(()=>{
+      musicStarted = true;
+      musicBtn.textContent = "♫";
+    })
+    .catch(()=>{});
+}
+
+/* Пытаемся включить сразу */
+window.addEventListener("load",()=>{
+  startMusic();
+});
+
+/* Если телефон заблокировал autoplay —
+   первое касание запускает музыку */
+document.addEventListener("pointerdown",()=>{
+  forceMusic();
+},{once:true});
+
+musicBtn.addEventListener("click",(e)=>{
+  e.stopPropagation();
+
+  if(music.paused){
+    forceMusic();
+  }else{
+    music.pause();
+    musicBtn.textContent = "♪";
+  }
+});
+
+/* =========================
+   PORTAL
+========================= */
+
+document.getElementById("portal").addEventListener("click",()=>{
+  forceMusic();
+
+  window.scrollTo({
+    top:window.innerHeight,
+    behavior:"smooth"
+  });
+});
 
 /* =========================
    COUNTDOWN
 ========================= */
 
-const eventDate =
-    new Date("2026-09-08T11:00:00+06:00").getTime();
-
+const targetDate = new Date("2026-09-08T11:00:00+06:00").getTime();
 
 function updateCountdown(){
 
-    const now = new Date().getTime();
+  const now = new Date().getTime();
+  const distance = targetDate - now;
 
-    const distance = eventDate - now;
+  if(distance <= 0){
+    document.getElementById("days").textContent="00";
+    document.getElementById("hours").textContent="00";
+    document.getElementById("minutes").textContent="00";
+    document.getElementById("seconds").textContent="00";
+    return;
+  }
 
+  const days = Math.floor(distance/(1000*60*60*24));
+  const hours = Math.floor(
+    (distance%(1000*60*60*24))/(1000*60*60)
+  );
+  const minutes = Math.floor(
+    (distance%(1000*60*60))/(1000*60)
+  );
+  const seconds = Math.floor(
+    (distance%(1000*60))/1000
+  );
 
-    if(distance <= 0){
+  document.getElementById("days").textContent=
+    String(days).padStart(2,"0");
 
-        document.getElementById("days").innerText = "00";
-        document.getElementById("hours").innerText = "00";
-        document.getElementById("minutes").innerText = "00";
-        document.getElementById("seconds").innerText = "00";
+  document.getElementById("hours").textContent=
+    String(hours).padStart(2,"0");
 
-        return;
+  document.getElementById("minutes").textContent=
+    String(minutes).padStart(2,"0");
 
-    }
-
-
-    const days = Math.floor(
-        distance / (1000 * 60 * 60 * 24)
-    );
-
-    const hours = Math.floor(
-        (distance / (1000 * 60 * 60)) % 24
-    );
-
-    const minutes = Math.floor(
-        (distance / (1000 * 60)) % 60
-    );
-
-    const seconds = Math.floor(
-        (distance / 1000) % 60
-    );
-
-
-    document.getElementById("days").innerText =
-        String(days).padStart(2,"0");
-
-    document.getElementById("hours").innerText =
-        String(hours).padStart(2,"0");
-
-    document.getElementById("minutes").innerText =
-        String(minutes).padStart(2,"0");
-
-    document.getElementById("seconds").innerText =
-        String(seconds).padStart(2,"0");
-
+  document.getElementById("seconds").textContent=
+    String(seconds).padStart(2,"0");
 }
 
-
 updateCountdown();
-
 setInterval(updateCountdown,1000);
-
 
 /* =========================
    RSVP
 ========================= */
 
-let participants =
-    Number(localStorage.getItem("aiSabakParticipants")) || 0;
+const response = document.getElementById("response");
 
+document.getElementById("yesBtn").addEventListener("click",()=>{
 
-document.getElementById("count").innerText =
-    participants;
+  forceMusic();
 
+  response.textContent =
+    "✨ Сонун! Сизди AI SABAKта күтөбүз. 8–9-сентябрь, саат 11:00.";
 
-function showForm(){
+});
 
-    document
-        .getElementById("nameForm")
-        .classList.add("show");
+document.getElementById("noBtn").addEventListener("click",()=>{
 
-    document
-        .getElementById("result")
-        .innerText = "";
+  response.textContent =
+    "Рахмат 🤍 Кийинки жолугушууларда күтөбүз.";
 
-}
-
-
-function submitRSVP(){
-
-    const name =
-        document.getElementById("name").value.trim();
-
-
-    if(!name){
-
-        document.getElementById("result").innerText =
-            "Атыңызды жазыңыз ❤️";
-
-        return;
-
-    }
-
-
-    participants++;
-
-    localStorage.setItem(
-        "aiSabakParticipants",
-        participants
-    );
-
-
-    document.getElementById("count").innerText =
-        participants;
-
-
-    document.getElementById("result").innerText =
-        "Рахмат, " + name + "! Сизди күтөбүз ❤️";
-
-}
-
-
-function notComing(){
-
-    document.getElementById("result").innerText =
-        "Макул ❤️ Кийинки жолугушууда күтөбүз.";
-
-}
-
+});
 
 /* =========================
    SCROLL ANIMATION
 ========================= */
 
-const reveals =
-    document.querySelectorAll(".reveal");
+const observer = new IntersectionObserver(
+  entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add("show");
+      }
+    });
+  },
+  {threshold:.12}
+);
 
-
-const observer =
-    new IntersectionObserver(
-
-        function(entries){
-
-            entries.forEach(function(entry){
-
-                if(entry.isIntersecting){
-
-                    entry.target.classList.add("visible");
-
-                }
-
-            });
-
-        },
-
-        {
-            threshold:.12
-        }
-
-    );
-
-
-reveals.forEach(function(el){
-
-    observer.observe(el);
-
+document.querySelectorAll(".reveal").forEach(el=>{
+  observer.observe(el);
 });
 
+/* =========================
+   NEURAL NETWORK CANVAS
+========================= */
+
+const canvas = document.getElementById("neuralCanvas");
+const ctx = canvas.getContext("2d");
+
+let width;
+let height;
+let particles=[];
+
+function resizeCanvas(){
+
+  width = canvas.width = window.innerWidth * devicePixelRatio;
+  height = canvas.height = window.innerHeight * devicePixelRatio;
+
+  canvas.style.width = window.innerWidth+"px";
+  canvas.style.height = window.innerHeight+"px";
+
+  ctx.setTransform(
+    devicePixelRatio,0,0,devicePixelRatio,0,0
+  );
+
+  createParticles();
+}
+
+function createParticles(){
+
+  particles=[];
+
+  const amount =
+    window.innerWidth < 600 ? 38 : 70;
+
+  for(let i=0;i<amount;i++){
+
+    particles.push({
+      x:Math.random()*window.innerWidth,
+      y:Math.random()*window.innerHeight,
+      vx:(Math.random()-.5)*.28,
+      vy:(Math.random()-.5)*.28,
+      r:Math.random()*1.7+.5
+    });
+
+  }
+}
+
+function drawNetwork(){
+
+  ctx.clearRect(
+    0,0,
+    window.innerWidth,
+    window.innerHeight
+  );
+
+  for(let i=0;i<particles.length;i++){
+
+    const p=particles[i];
+
+    p.x+=p.vx;
+    p.y+=p.vy;
+
+    if(p.x<0 || p.x>window.innerWidth)
+      p.vx*=-1;
+
+    if(p.y<0 || p.y>window.innerHeight)
+      p.vy*=-1;
+
+    for(let j=i+1;j<particles.length;j++){
+
+      const q=particles[j];
+
+      const dx=p.x-q.x;
+      const dy=p.y-q.y;
+
+      const distance=Math.sqrt(dx*dx+dy*dy);
+
+      if(distance<145){
+
+        const opacity =
+          (1-distance/145)*.22;
+
+        ctx.beginPath();
+        ctx.moveTo(p.x,p.y);
+        ctx.lineTo(q.x,q.y);
+        ctx.strokeStyle=
+          `rgba(0,229,212,${opacity})`;
+        ctx.lineWidth=.6;
+        ctx.stroke();
+
+      }
+    }
+
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+
+    ctx.fillStyle="rgba(69,201,255,.65)";
+    ctx.shadowBlur=10;
+    ctx.shadowColor="#00e5d4";
+    ctx.fill();
+    ctx.shadowBlur=0;
+  }
+
+  requestAnimationFrame(drawNetwork);
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+resizeCanvas();
+drawNetwork();
 
 </script>
-
 
 </body>
 </html>
