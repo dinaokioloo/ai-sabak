@@ -3,840 +3,1137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>AI SABAK — 2 күндүк акысыз сабак</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap');
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+:root{
+    --bg:#e9e7e2;
+    --cream:#f7f5f0;
+    --white:rgba(255,255,255,.48);
+    --glass:rgba(255,255,255,.34);
+    --line:rgba(255,255,255,.65);
+    --dark:#22272b;
+    --muted:#73777a;
+    --blue:#9ac9dc;
+    --lav:#c9bde2;
+    --pink:#e5b9c9;
+    --shadow:0 30px 80px rgba(71,72,72,.15);
 }
 
-html {
-    scroll-behavior: smooth;
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
 }
 
-body {
-    font-family: 'DM Sans', sans-serif;
-    background: #eef1e9;
-    color: #17231f;
-    overflow-x: hidden;
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:'DM Sans',sans-serif;
+    color:var(--dark);
+    background:var(--bg);
+    overflow-x:hidden;
+}
+
+button,
+input{
+    font-family:inherit;
 }
 
 /* =========================
-   ENVELOPE
+   INTRO / GLASS ENVELOPE
 ========================= */
 
-.intro {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
+.intro{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background:
-        radial-gradient(circle at 50% 35%, rgba(169, 205, 190, .35), transparent 35%),
-        #eef1e9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 1s ease, visibility 1s ease;
+        radial-gradient(circle at 20% 20%,rgba(160,207,226,.7),transparent 30%),
+        radial-gradient(circle at 80% 70%,rgba(220,185,211,.55),transparent 30%),
+        linear-gradient(135deg,#e7e6e2,#d9dde0);
+    transition:opacity 1.2s ease,visibility 1.2s ease;
 }
 
-.intro.hide {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+.intro.hide{
+    opacity:0;
+    visibility:hidden;
+    pointer-events:none;
 }
 
-.intro-content {
-    text-align: center;
-    padding: 30px;
+.intro-glow{
+    position:absolute;
+    width:350px;
+    height:350px;
+    border-radius:50%;
+    background:rgba(255,255,255,.45);
+    filter:blur(70px);
 }
 
-.intro-small {
-    font-size: 11px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #71817a;
-    margin-bottom: 28px;
+.intro-inner{
+    position:relative;
+    z-index:2;
+    text-align:center;
 }
 
-.envelope {
-    width: min(330px, 78vw);
-    height: 220px;
-    position: relative;
-    cursor: pointer;
-    perspective: 1000px;
-    filter: drop-shadow(0 25px 35px rgba(40,60,50,.18));
+.intro-label{
+    font-size:10px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:#70767a;
+    margin-bottom:28px;
 }
 
-.envelope-back {
-    position: absolute;
-    inset: 0;
-    background: #dfe6dd;
-    border-radius: 4px;
-    overflow: hidden;
+.glass-envelope{
+    position:relative;
+    width:min(340px,82vw);
+    height:225px;
+    cursor:pointer;
+    perspective:1200px;
+    filter:drop-shadow(0 35px 35px rgba(40,50,55,.2));
 }
 
-.envelope-back:before,
-.envelope-back:after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 2px;
-    background: rgba(72,91,82,.18);
-    top: 50%;
+.env-back{
+    position:absolute;
+    inset:0;
+    border:1px solid rgba(255,255,255,.8);
+    background:rgba(255,255,255,.24);
+    backdrop-filter:blur(20px);
+    -webkit-backdrop-filter:blur(20px);
+    border-radius:28px;
+    overflow:hidden;
 }
 
-.envelope-back:before {
-    transform: rotate(31deg);
+.env-back:before,
+.env-back:after{
+    content:"";
+    position:absolute;
+    width:120%;
+    height:1px;
+    left:-10%;
+    background:rgba(255,255,255,.8);
+    top:50%;
 }
 
-.envelope-back:after {
-    transform: rotate(-31deg);
+.env-back:before{
+    transform:rotate(28deg);
 }
 
-.envelope-paper {
-    position: absolute;
-    width: 82%;
-    height: 78%;
-    left: 9%;
-    bottom: 4%;
-    background: #fbfcf8;
-    padding: 25px 15px;
-    text-align: center;
-    transition: transform 1s cubic-bezier(.2,.8,.2,1);
-    z-index: 2;
+.env-back:after{
+    transform:rotate(-28deg);
 }
 
-.envelope-paper span {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 3px;
-    color: #77877f;
-    margin-bottom: 10px;
+.env-paper{
+    position:absolute;
+    z-index:2;
+    width:82%;
+    height:76%;
+    left:9%;
+    bottom:6%;
+    border-radius:18px;
+    background:rgba(255,255,255,.78);
+    backdrop-filter:blur(20px);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    transition:transform 1s cubic-bezier(.2,.8,.2,1);
+    box-shadow:0 15px 40px rgba(50,60,65,.08);
 }
 
-.envelope-paper strong {
-    font-family: 'Playfair Display', serif;
-    font-size: 30px;
-    font-weight: 500;
-    color: #20332c;
+.env-paper small{
+    font-size:9px;
+    letter-spacing:3px;
+    color:#85898d;
 }
 
-.envelope-flap {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 55%;
-    background: #d5dfd7;
-    clip-path: polygon(0 0, 100% 0, 50% 100%);
-    transform-origin: top center;
-    transition: transform 1s cubic-bezier(.2,.8,.2,1);
-    z-index: 4;
+.env-paper strong{
+    font-family:'Playfair Display',serif;
+    font-size:34px;
+    margin-top:8px;
+    letter-spacing:-1px;
 }
 
-.envelope-front {
-    position: absolute;
-    inset: 0;
-    background: transparent;
-    z-index: 5;
-    pointer-events: none;
+.env-flap{
+    position:absolute;
+    z-index:4;
+    inset:0 0 auto;
+    height:57%;
+    background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(204,221,226,.45));
+    border:1px solid rgba(255,255,255,.75);
+    clip-path:polygon(0 0,100% 0,50% 100%);
+    transform-origin:top center;
+    transition:transform 1s cubic-bezier(.2,.8,.2,1);
+    backdrop-filter:blur(15px);
 }
 
-.envelope-seal {
-    position: absolute;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: #233d34;
-    color: #e7eee8;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    letter-spacing: 1px;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 6;
-    box-shadow: 0 8px 20px rgba(30,50,42,.2);
-    transition: opacity .4s ease;
+.env-seal{
+    position:absolute;
+    z-index:6;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    width:54px;
+    height:54px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-size:10px;
+    letter-spacing:1px;
+    background:linear-gradient(135deg,#323c42,#899aa1);
+    box-shadow:0 10px 25px rgba(40,50,55,.2);
+    transition:opacity .3s;
 }
 
-.envelope.open .envelope-flap {
-    transform: rotateX(180deg);
+.glass-envelope.open .env-flap{
+    transform:rotateX(180deg);
 }
 
-.envelope.open .envelope-paper {
-    transform: translateY(-80px);
+.glass-envelope.open .env-paper{
+    transform:translateY(-80px);
 }
 
-.envelope.open .envelope-seal {
-    opacity: 0;
+.glass-envelope.open .env-seal{
+    opacity:0;
 }
 
-.intro-hint {
-    margin-top: 30px;
-    font-size: 12px;
-    color: #68776f;
-    letter-spacing: 1px;
-    animation: pulse 2s infinite;
+.open-hint{
+    margin-top:30px;
+    font-size:10px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:#71777a;
+    animation:hintPulse 2s infinite;
 }
 
-@keyframes pulse {
-    50% { opacity: .45; }
+@keyframes hintPulse{
+    50%{opacity:.4}
 }
 
 /* =========================
-   MAIN
+   GLOBAL
 ========================= */
 
-.site {
-    min-height: 100vh;
+section{
+    position:relative;
+    overflow:hidden;
+    padding:110px 20px;
 }
 
-section {
-    position: relative;
-    padding: 100px 20px;
+.container{
+    width:min(1080px,100%);
+    margin:auto;
 }
 
-.container {
-    width: min(1000px, 100%);
-    margin: auto;
+.center{
+    text-align:center;
 }
 
-/* AI decorative background */
-
-.ai-grid {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: .35;
-    background-image:
-        linear-gradient(rgba(42,75,64,.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(42,75,64,.07) 1px, transparent 1px);
-    background-size: 50px 50px;
-    mask-image: linear-gradient(to bottom, black, transparent);
+.kicker{
+    font-size:9px;
+    letter-spacing:4px;
+    text-transform:uppercase;
+    color:#7d8386;
+    margin-bottom:18px;
 }
 
-.glow {
-    position: absolute;
-    width: 280px;
-    height: 280px;
-    border-radius: 50%;
-    background: rgba(152, 190, 174, .25);
-    filter: blur(50px);
-    pointer-events: none;
+h2{
+    font-family:'Playfair Display',serif;
+    font-weight:500;
+    font-size:clamp(44px,7vw,82px);
+    line-height:.95;
+    letter-spacing:-3px;
+}
+
+.glass{
+    background:var(--glass);
+    border:1px solid var(--line);
+    box-shadow:var(--shadow);
+    backdrop-filter:blur(25px);
+    -webkit-backdrop-filter:blur(25px);
+}
+
+.orb{
+    position:absolute;
+    border-radius:50%;
+    pointer-events:none;
+    filter:blur(1px);
+}
+
+.orb-blue{
+    width:240px;
+    height:240px;
+    background:radial-gradient(circle at 35% 30%,#d9f3ff,#9fcbd9 45%,rgba(160,200,210,0) 70%);
+}
+
+.orb-pink{
+    width:190px;
+    height:190px;
+    background:radial-gradient(circle at 35% 30%,#f6dbe7,#d7aec4 45%,rgba(220,180,200,0) 70%);
+}
+
+.orb-lav{
+    width:150px;
+    height:150px;
+    background:radial-gradient(circle at 35% 30%,#eee5ff,#c6b8dc 45%,rgba(200,185,220,0) 70%);
 }
 
 /* =========================
    HERO
 ========================= */
 
-.hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+.hero{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
     background:
-        radial-gradient(circle at 80% 20%, rgba(190,210,199,.65), transparent 30%),
-        linear-gradient(145deg, #eef1e9, #e3e9e1);
+        radial-gradient(circle at 12% 30%,rgba(153,202,220,.42),transparent 25%),
+        radial-gradient(circle at 88% 70%,rgba(220,186,209,.35),transparent 28%),
+        linear-gradient(135deg,#eeece7,#e0e3e4);
 }
 
-.hero .glow {
-    top: 10%;
-    right: -80px;
+.hero .orb-blue{
+    left:-80px;
+    top:12%;
 }
 
-.hero-content {
-    width: min(900px, 100%);
-    text-align: center;
-    position: relative;
-    z-index: 2;
+.hero .orb-pink{
+    right:-40px;
+    bottom:8%;
 }
 
-.eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    border: 1px solid rgba(50,75,65,.18);
-    padding: 9px 15px;
-    border-radius: 100px;
-    font-size: 10px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #52665d;
-    background: rgba(255,255,255,.3);
-    backdrop-filter: blur(10px);
+.hero-content{
+    position:relative;
+    z-index:2;
+    text-align:center;
 }
 
-.eyebrow i {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #526f62;
-    box-shadow: 0 0 12px #7eaa97;
+.top-pill{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 18px;
+    border-radius:50px;
+    background:rgba(255,255,255,.35);
+    border:1px solid rgba(255,255,255,.7);
+    backdrop-filter:blur(15px);
+    font-size:9px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:#70767a;
 }
 
-.hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(65px, 13vw, 145px);
-    line-height: .85;
-    font-weight: 500;
-    letter-spacing: -7px;
-    margin: 35px 0 25px;
-    color: #1b3028;
+.top-pill i{
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#7ea8b9;
+    box-shadow:0 0 15px #9dd8ed;
 }
 
-.hero h1 span {
-    display: block;
-    font-family: 'DM Sans', sans-serif;
-    font-size: clamp(17px, 3vw, 30px);
-    letter-spacing: 7px;
-    font-weight: 500;
-    margin-top: 25px;
-    color: #62756b;
+.hero-title{
+    margin:40px auto 25px;
+    font-family:'Playfair Display',serif;
+    font-size:clamp(75px,15vw,175px);
+    font-weight:500;
+    line-height:.75;
+    letter-spacing:-9px;
+    color:#272d31;
 }
 
-.hero-description {
-    max-width: 520px;
-    margin: auto;
-    font-size: 15px;
-    line-height: 1.8;
-    color: #5d6d65;
+.hero-title span{
+    display:block;
+    margin-top:30px;
+    font-family:'DM Sans',sans-serif;
+    font-size:clamp(14px,2vw,23px);
+    letter-spacing:9px;
+    line-height:1;
+    font-weight:500;
+    color:#72797c;
 }
 
-.hero-info {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 40px;
+.hero-subtitle{
+    max-width:560px;
+    margin:auto;
+    font-size:15px;
+    line-height:1.8;
+    color:#71777a;
 }
 
-.info-card {
-    background: rgba(255,255,255,.48);
-    border: 1px solid rgba(50,75,65,.12);
-    padding: 17px 24px;
-    min-width: 130px;
-    backdrop-filter: blur(12px);
+.hero-info{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-top:40px;
 }
 
-.info-card small {
-    display: block;
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: #819087;
-    margin-bottom: 7px;
+.info{
+    min-width:150px;
+    padding:18px 24px;
+    border-radius:18px;
 }
 
-.info-card strong {
-    font-size: 15px;
-    font-weight: 600;
+.info small{
+    display:block;
+    font-size:8px;
+    letter-spacing:2px;
+    color:#8b9093;
+    margin-bottom:7px;
 }
 
-.scroll {
-    position: absolute;
-    bottom: 25px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 9px;
-    letter-spacing: 3px;
-    color: #83918a;
+.info strong{
+    font-size:14px;
+    font-weight:600;
+}
+
+.scroll-down{
+    position:absolute;
+    bottom:25px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:8px;
+    letter-spacing:4px;
+    color:#8b9093;
 }
 
 /* =========================
-   AI VISUAL
+   AI INTRO
 ========================= */
 
-.ai-visual-section {
-    background: #182923;
-    color: #edf3ed;
-    overflow: hidden;
-}
-
-.ai-visual-section .ai-grid {
-    opacity: .13;
-    background-image:
-        linear-gradient(rgba(255,255,255,.2) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.2) 1px, transparent 1px);
-}
-
-.ai-visual-section .glow {
-    background: rgba(122,190,163,.18);
-}
-
-.section-label {
-    font-size: 10px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: #9bb3a7;
-    margin-bottom: 20px;
-}
-
-.section-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(42px, 7vw, 75px);
-    line-height: 1;
-    font-weight: 500;
-    margin-bottom: 30px;
-}
-
-.ai-visual-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 70px;
-    align-items: center;
-}
-
-.ai-text {
-    color: #bac9c1;
-    line-height: 1.8;
-    font-size: 15px;
-}
-
-.neural-orb {
-    width: min(390px, 75vw);
-    aspect-ratio: 1;
-    margin: auto;
-    border-radius: 50%;
-    position: relative;
+.ai-world{
+    min-height:720px;
     background:
-        radial-gradient(circle at center, rgba(157,209,184,.4) 0 3%, transparent 4%),
-        radial-gradient(circle at center, transparent 30%, rgba(143,194,170,.15) 31%, transparent 32%),
-        radial-gradient(circle at center, transparent 55%, rgba(143,194,170,.12) 56%, transparent 57%);
-    border: 1px solid rgba(180,220,201,.2);
-    animation: rotateOrb 20s linear infinite;
+        radial-gradient(circle at 70% 35%,rgba(180,205,220,.35),transparent 30%),
+        #20282d;
+    color:white;
 }
 
-.neural-orb:before,
-.neural-orb:after {
-    content: "";
-    position: absolute;
-    inset: 18%;
-    border: 1px solid rgba(180,220,201,.25);
-    border-radius: 48% 52% 60% 40%;
+.ai-world .kicker{
+    color:#9da9ae;
 }
 
-.neural-orb:after {
-    inset: 30%;
-    border-radius: 60% 40% 45% 55%;
-    transform: rotate(70deg);
+.ai-world .orb-blue{
+    right:-80px;
+    top:80px;
+    opacity:.4;
 }
 
-.node {
-    position: absolute;
-    width: 8px;
-    height: 8px;
-    background: #b4d6c2;
-    border-radius: 50%;
-    box-shadow: 0 0 18px rgba(190,230,207,.8);
+.ai-world .orb-lav{
+    left:-60px;
+    bottom:80px;
+    opacity:.35;
 }
 
-.node:nth-child(1) { top: 15%; left: 55%; }
-.node:nth-child(2) { top: 37%; right: 8%; }
-.node:nth-child(3) { bottom: 18%; right: 30%; }
-.node:nth-child(4) { bottom: 28%; left: 10%; }
-.node:nth-child(5) { top: 30%; left: 15%; }
+.ai-layout{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    align-items:center;
+    gap:70px;
+}
 
-@keyframes rotateOrb {
-    to { transform: rotate(360deg); }
+.ai-world h2{
+    color:#f2f3f2;
+}
+
+.ai-description{
+    margin-top:30px;
+    max-width:500px;
+    color:#b7bec1;
+    font-size:15px;
+    line-height:1.9;
+}
+
+/* Neural glass object */
+
+.neural-scene{
+    height:460px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.neural-card{
+    width:330px;
+    height:380px;
+    border-radius:170px 170px 45px 45px;
+    background:linear-gradient(
+        145deg,
+        rgba(255,255,255,.25),
+        rgba(255,255,255,.06)
+    );
+    border:1px solid rgba(255,255,255,.32);
+    box-shadow:
+        inset 0 0 40px rgba(255,255,255,.07),
+        0 40px 80px rgba(0,0,0,.28);
+    backdrop-filter:blur(20px);
+    position:relative;
+    overflow:hidden;
+}
+
+.neural-card:before{
+    content:"AI";
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    font-family:'Playfair Display',serif;
+    font-size:115px;
+    color:rgba(255,255,255,.1);
+}
+
+.neural-ring{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:230px;
+    height:230px;
+    transform:translate(-50%,-50%);
+    border:1px solid rgba(180,220,235,.45);
+    border-radius:50%;
+    animation:rotate 18s linear infinite;
+}
+
+.neural-ring:nth-child(2){
+    width:170px;
+    height:270px;
+    transform:translate(-50%,-50%) rotate(55deg);
+}
+
+.neural-ring:nth-child(3){
+    width:270px;
+    height:150px;
+    transform:translate(-50%,-50%) rotate(110deg);
+}
+
+.neural-dot{
+    position:absolute;
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#ccecf7;
+    box-shadow:0 0 22px #bcecff;
+}
+
+.d1{top:20%;left:27%}
+.d2{top:30%;right:15%}
+.d3{bottom:22%;right:24%}
+.d4{bottom:15%;left:20%}
+.d5{top:52%;left:10%}
+
+@keyframes rotate{
+    to{transform:translate(-50%,-50%) rotate(360deg)}
+}
+
+/* =========================
+   WHAT YOU LEARN
+========================= */
+
+.learn{
+    background:#f2f0eb;
+}
+
+.learn-head{
+    max-width:700px;
+    margin:auto;
+}
+
+.learn-head p{
+    margin-top:25px;
+    color:#777d80;
+    line-height:1.8;
+}
+
+.learn-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:22px;
+    margin-top:65px;
+}
+
+.learn-card{
+    min-height:290px;
+    padding:38px;
+    border-radius:35px;
+    position:relative;
+    overflow:hidden;
+    transition:transform .4s;
+}
+
+.learn-card:hover{
+    transform:translateY(-8px);
+}
+
+.learn-card:nth-child(1){
+    background:linear-gradient(145deg,rgba(220,238,246,.9),rgba(183,210,221,.55));
+}
+
+.learn-card:nth-child(2){
+    background:linear-gradient(145deg,rgba(245,231,220,.9),rgba(225,203,190,.6));
+}
+
+.learn-card:nth-child(3){
+    background:linear-gradient(145deg,rgba(236,226,245,.9),rgba(202,187,220,.6));
+}
+
+.learn-card:nth-child(4){
+    background:linear-gradient(145deg,rgba(245,220,228,.9),rgba(222,181,198,.6));
+}
+
+.card-number{
+    font-size:10px;
+    letter-spacing:3px;
+    color:#777c80;
+}
+
+.learn-card h3{
+    margin-top:50px;
+    font-family:'Playfair Display',serif;
+    font-size:40px;
+    font-weight:500;
+}
+
+.learn-card p{
+    max-width:330px;
+    margin-top:15px;
+    font-size:13px;
+    line-height:1.7;
+    color:#666d71;
+}
+
+.card-orb{
+    position:absolute;
+    width:120px;
+    height:120px;
+    border-radius:50%;
+    right:-20px;
+    bottom:-25px;
+    background:rgba(255,255,255,.4);
+    filter:blur(2px);
+}
+
+/* =========================
+   CINEMA
+========================= */
+
+.cinema{
+    background:
+        radial-gradient(circle at 80% 20%,rgba(193,175,215,.2),transparent 30%),
+        #26252a;
+    color:white;
+}
+
+.cinema .kicker{
+    color:#a9a5af;
+}
+
+.cinema h2{
+    color:#f6f4f1;
+}
+
+.cinema-intro{
+    max-width:650px;
+    margin:25px auto 0;
+    text-align:center;
+    color:#b6b3b7;
+    line-height:1.8;
+}
+
+.cinema-stage{
+    margin-top:60px;
+    min-height:540px;
+    position:relative;
+    border-radius:40px;
+    overflow:hidden;
+    background:
+        radial-gradient(circle at 70% 30%,rgba(167,206,222,.3),transparent 20%),
+        radial-gradient(circle at 25% 70%,rgba(212,166,197,.22),transparent 25%),
+        linear-gradient(135deg,#4a4b50,#1e2226);
+    border:1px solid rgba(255,255,255,.15);
+    box-shadow:0 40px 100px rgba(0,0,0,.3);
+}
+
+.stage-moon{
+    position:absolute;
+    width:180px;
+    height:180px;
+    border-radius:50%;
+    top:65px;
+    right:100px;
+    background:radial-gradient(circle at 35% 30%,#fff,#d9e9ec 50%,#91a8ae);
+    box-shadow:0 0 70px rgba(200,235,245,.35);
+}
+
+.stage-arc{
+    position:absolute;
+    width:500px;
+    height:500px;
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:50%;
+    left:50%;
+    bottom:-370px;
+    transform:translateX(-50%);
+}
+
+.stage-card{
+    position:absolute;
+    width:min(390px,80%);
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    padding:35px;
+    border-radius:30px;
+    text-align:center;
+    background:rgba(255,255,255,.1);
+    border:1px solid rgba(255,255,255,.3);
+    backdrop-filter:blur(22px);
+    box-shadow:0 30px 60px rgba(0,0,0,.25);
+}
+
+.stage-card span{
+    font-size:9px;
+    letter-spacing:4px;
+    color:#bdc5c8;
+}
+
+.stage-card h3{
+    margin:15px 0;
+    font-family:'Playfair Display',serif;
+    font-size:45px;
+    font-weight:500;
+}
+
+.stage-card p{
+    font-size:12px;
+    color:#c4c8ca;
+    line-height:1.7;
+}
+
+/* =========================
+   DAYS
+========================= */
+
+.days-section{
+    background:#eeece7;
+}
+
+.days-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:22px;
+    margin-top:60px;
+}
+
+.day{
+    min-height:450px;
+    padding:40px;
+    border-radius:35px;
+    position:relative;
+    overflow:hidden;
+}
+
+.day-one{
+    background:linear-gradient(145deg,#d8ebf1,#c0dce5);
+}
+
+.day-two{
+    background:linear-gradient(145deg,#ddd3e9,#c7b8d9);
+}
+
+.day small{
+    font-size:9px;
+    letter-spacing:3px;
+    color:#6e767b;
+}
+
+.day h3{
+    font-family:'Playfair Display',serif;
+    font-size:58px;
+    font-weight:500;
+    margin:15px 0 35px;
+}
+
+.lesson{
+    display:flex;
+    gap:18px;
+    padding:15px 0;
+    border-top:1px solid rgba(70,80,85,.14);
+}
+
+.lesson b{
+    font-size:10px;
+    min-width:45px;
+    color:#727b7f;
+}
+
+.lesson p{
+    font-size:13px;
+    line-height:1.5;
 }
 
 /* =========================
    CALENDAR
 ========================= */
 
-.calendar-section {
-    background: #f7f8f4;
+.calendar-section{
+    background:#f7f5f0;
 }
 
-.center {
-    text-align: center;
+.calendar{
+    width:min(470px,100%);
+    margin:55px auto 0;
+    padding:35px;
+    border-radius:32px;
 }
 
-.calendar {
-    width: min(440px, 100%);
-    margin: 50px auto 0;
-    background: #fff;
-    padding: 30px;
-    box-shadow: 0 25px 60px rgba(38,55,47,.08);
+.calendar-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
 }
 
-.calendar-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
+.calendar-top strong{
+    font-family:'Playfair Display',serif;
+    font-size:27px;
+    font-weight:500;
 }
 
-.calendar-head strong {
-    font-family: 'Playfair Display', serif;
-    font-size: 25px;
-    font-weight: 500;
+.calendar-top span{
+    font-size:9px;
+    letter-spacing:3px;
+    color:#8a8e91;
 }
 
-.calendar-head span {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: #8a9891;
+.week,
+.numbers{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:8px;
+    text-align:center;
 }
 
-.days,
-.dates {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    text-align: center;
+.week div{
+    font-size:8px;
+    color:#9a9da0;
+    padding-bottom:10px;
 }
 
-.days div {
-    font-size: 9px;
-    color: #9aa59f;
-    padding-bottom: 8px;
+.numbers div{
+    height:43px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:12px;
 }
 
-.dates div {
-    height: 43px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13px;
-    position: relative;
-}
-
-.dates .event-day {
-    background: #203b31;
-    color: white;
-    border-radius: 50%;
-    font-weight: 700;
-}
-
-.dates .event-day:after {
-    content: "";
-    position: absolute;
-    bottom: 5px;
-    width: 3px;
-    height: 3px;
-    background: #b8d4c3;
-    border-radius: 50%;
+.numbers .event{
+    width:43px;
+    height:43px;
+    margin:auto;
+    border-radius:50%;
+    background:#292f33;
+    color:white;
+    box-shadow:0 8px 20px rgba(30,40,45,.18);
 }
 
 /* =========================
    COUNTDOWN
 ========================= */
 
-.countdown-section {
-    background: #e3e9e1;
+.countdown-section{
+    background:
+        radial-gradient(circle at 20% 20%,rgba(160,207,225,.25),transparent 30%),
+        #dfe2e1;
 }
 
-.countdown {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    max-width: 700px;
-    margin: 50px auto 0;
-    gap: 12px;
+.countdown{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:15px;
+    margin:55px auto 0;
+    max-width:800px;
 }
 
-.time-box {
-    background: rgba(255,255,255,.55);
-    border: 1px solid rgba(42,65,55,.1);
-    padding: 25px 10px;
-    text-align: center;
+.count-box{
+    padding:30px 10px;
+    border-radius:25px;
+    text-align:center;
 }
 
-.time-box strong {
-    display: block;
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(35px, 6vw, 55px);
-    font-weight: 500;
+.count-box strong{
+    display:block;
+    font-family:'Playfair Display',serif;
+    font-size:clamp(42px,7vw,68px);
+    font-weight:500;
 }
 
-.time-box span {
-    font-size: 8px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: #7d8c84;
-}
-
-/* =========================
-   PROGRAM
-========================= */
-
-.program-section {
-    background: #f7f8f4;
-}
-
-.program-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-top: 50px;
-}
-
-.day-card {
-    padding: 38px;
-    background: #e9eee8;
-    min-height: 350px;
-    position: relative;
-    overflow: hidden;
-}
-
-.day-card:nth-child(2) {
-    background: #20382f;
-    color: white;
-}
-
-.day-number {
-    font-size: 10px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    margin-bottom: 18px;
-    opacity: .6;
-}
-
-.day-card h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 38px;
-    font-weight: 500;
-    margin-bottom: 25px;
-}
-
-.program-item {
-    display: flex;
-    gap: 20px;
-    padding: 15px 0;
-    border-top: 1px solid rgba(50,70,60,.13);
-}
-
-.day-card:nth-child(2) .program-item {
-    border-color: rgba(255,255,255,.13);
-}
-
-.program-item time {
-    font-size: 10px;
-    letter-spacing: 1px;
-    opacity: .55;
-    min-width: 45px;
-}
-
-.program-item p {
-    font-size: 13px;
-    line-height: 1.5;
+.count-box span{
+    font-size:8px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    color:#858b8d;
 }
 
 /* =========================
    RSVP
 ========================= */
 
-.rsvp-section {
+.rsvp{
     background:
-        radial-gradient(circle at 20% 20%, rgba(157,192,173,.25), transparent 30%),
-        #e6ebe5;
+        radial-gradient(circle at 20% 20%,rgba(166,209,224,.35),transparent 25%),
+        radial-gradient(circle at 80% 70%,rgba(219,185,208,.35),transparent 25%),
+        #e9e7e2;
 }
 
-.rsvp-box {
-    max-width: 600px;
-    margin: 50px auto 0;
-    background: rgba(255,255,255,.65);
-    padding: 45px;
-    border: 1px solid rgba(40,65,54,.1);
-    box-shadow: 0 25px 70px rgba(40,55,48,.08);
+.rsvp-box{
+    width:min(620px,100%);
+    margin:55px auto 0;
+    padding:45px;
+    border-radius:35px;
 }
 
-.rsvp-box label {
-    display: block;
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #718078;
-    margin-bottom: 12px;
+.rsvp-box label.title{
+    display:block;
+    font-size:9px;
+    letter-spacing:2px;
+    text-transform:uppercase;
+    color:#777e81;
+    margin-bottom:13px;
 }
 
-.rsvp-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-bottom: 28px;
+.options{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-bottom:28px;
 }
 
-.rsvp-option {
-    position: relative;
+.option{
+    position:relative;
 }
 
-.rsvp-option input {
-    position: absolute;
-    opacity: 0;
+.option input{
+    position:absolute;
+    opacity:0;
 }
 
-.rsvp-option span {
-    display: block;
-    padding: 17px 12px;
-    text-align: center;
-    border: 1px solid #cbd5cd;
-    cursor: pointer;
-    font-size: 12px;
-    transition: .3s;
+.option span{
+    display:block;
+    padding:17px 10px;
+    text-align:center;
+    border-radius:15px;
+    border:1px solid rgba(80,90,95,.15);
+    background:rgba(255,255,255,.25);
+    font-size:12px;
+    cursor:pointer;
+    transition:.3s;
 }
 
-.rsvp-option input:checked + span {
-    background: #20382f;
-    color: white;
-    border-color: #20382f;
+.option input:checked + span{
+    background:#292f33;
+    color:white;
+    border-color:#292f33;
 }
 
-.name-input {
-    width: 100%;
-    border: none;
-    border-bottom: 1px solid #bcc8bf;
-    background: transparent;
-    padding: 13px 0;
-    outline: none;
-    font-family: inherit;
-    font-size: 15px;
-    margin-bottom: 25px;
+.name{
+    width:100%;
+    border:0;
+    border-bottom:1px solid rgba(70,80,85,.25);
+    background:transparent;
+    padding:15px 0;
+    outline:none;
+    font-size:15px;
+    margin-bottom:25px;
 }
 
-.guests {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 20px 0 30px;
+.guests{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
 }
 
-.guest-controls {
-    display: flex;
-    align-items: center;
-    gap: 16px;
+.guests-title{
+    font-size:10px;
+    letter-spacing:1px;
+    color:#72797c;
 }
 
-.guest-btn {
-    width: 34px;
-    height: 34px;
-    border: 1px solid #c3cec6;
-    background: white;
-    cursor: pointer;
-    border-radius: 50%;
-    font-size: 18px;
+.guest-controls{
+    display:flex;
+    align-items:center;
+    gap:15px;
 }
 
-#guestCount {
-    min-width: 20px;
-    text-align: center;
+.guest-btn{
+    width:34px;
+    height:34px;
+    border:1px solid rgba(70,80,85,.18);
+    background:rgba(255,255,255,.5);
+    border-radius:50%;
+    cursor:pointer;
+    font-size:17px;
 }
 
-.submit {
-    width: 100%;
-    border: none;
-    background: #20382f;
-    color: white;
-    padding: 18px;
-    font-family: inherit;
-    font-size: 11px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: .3s;
+#guestCount{
+    min-width:15px;
+    text-align:center;
 }
 
-.submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(32,56,47,.2);
+.submit{
+    width:100%;
+    padding:18px;
+    border:0;
+    border-radius:16px;
+    background:#292f33;
+    color:white;
+    font-size:10px;
+    letter-spacing:3px;
+    text-transform:uppercase;
+    cursor:pointer;
+    box-shadow:0 15px 30px rgba(30,40,45,.16);
+    transition:.3s;
+}
+
+.submit:hover{
+    transform:translateY(-3px);
 }
 
 /* =========================
    FOOTER
 ========================= */
 
-footer {
-    background: #172820;
-    color: #aebdb4;
-    text-align: center;
-    padding: 60px 20px;
+footer{
+    padding:90px 20px;
+    text-align:center;
+    background:#252a2e;
+    color:#aeb4b7;
 }
 
-footer strong {
-    display: block;
-    color: white;
-    font-family: 'Playfair Display', serif;
-    font-size: 32px;
-    margin-bottom: 10px;
+footer h3{
+    font-family:'Playfair Display',serif;
+    font-size:48px;
+    color:white;
+    font-weight:500;
 }
 
-footer p {
-    font-size: 10px;
-    letter-spacing: 2px;
+footer p{
+    margin-top:15px;
+    font-size:9px;
+    letter-spacing:3px;
 }
 
-/* MUSIC */
+/* =========================
+   MUSIC
+========================= */
 
-.music-btn {
-    position: fixed;
-    right: 20px;
-    bottom: 20px;
-    z-index: 100;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,255,255,.3);
-    background: #20382f;
-    color: white;
-    cursor: pointer;
-    box-shadow: 0 10px 25px rgba(20,40,30,.2);
-    font-size: 17px;
+.music{
+    position:fixed;
+    z-index:500;
+    right:20px;
+    bottom:20px;
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    border:1px solid rgba(255,255,255,.7);
+    background:rgba(35,42,46,.85);
+    color:white;
+    cursor:pointer;
+    box-shadow:0 15px 30px rgba(20,30,35,.2);
+    backdrop-filter:blur(15px);
 }
 
-/* MOBILE */
+/* =========================
+   MOBILE
+========================= */
 
-@media (max-width: 700px) {
+@media(max-width:700px){
 
-    section {
-        padding: 75px 18px;
+    section{
+        padding:80px 18px;
     }
 
-    .hero h1 {
-        letter-spacing: -4px;
+    .hero-title{
+        letter-spacing:-5px;
     }
 
-    .ai-visual-content {
-        grid-template-columns: 1fr;
-        gap: 45px;
+    .hero-title span{
+        letter-spacing:5px;
     }
 
-    .neural-orb {
-        width: 280px;
+    .hero-info{
+        gap:8px;
     }
 
-    .countdown {
-        grid-template-columns: repeat(2, 1fr);
+    .info{
+        min-width:105px;
+        padding:14px 12px;
     }
 
-    .program-grid {
-        grid-template-columns: 1fr;
+    .info strong{
+        font-size:11px;
     }
 
-    .day-card {
-        min-height: auto;
-        padding: 30px;
+    .ai-layout{
+        grid-template-columns:1fr;
+        gap:35px;
     }
 
-    .rsvp-box {
-        padding: 30px 22px;
+    .neural-scene{
+        height:400px;
     }
 
-    .rsvp-options {
-        grid-template-columns: 1fr;
+    .neural-card{
+        width:280px;
+        height:340px;
     }
 
-    .calendar {
-        padding: 22px 12px;
+    .learn-grid,
+    .days-grid{
+        grid-template-columns:1fr;
     }
 
-    .dates div {
-        height: 39px;
+    .learn-card{
+        min-height:260px;
+    }
+
+    .stage-moon{
+        width:100px;
+        height:100px;
+        right:30px;
+        top:35px;
+    }
+
+    .stage-card{
+        width:82%;
+    }
+
+    .countdown{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .rsvp-box{
+        padding:30px 22px;
+    }
+
+    .options{
+        grid-template-columns:1fr;
+    }
+
+    h2{
+        letter-spacing:-2px;
     }
 }
 </style>
@@ -844,37 +1141,39 @@ footer p {
 
 <body>
 
-<!-- ENVELOPE -->
+<!-- =========================
+     INTRO
+========================= -->
 
 <div class="intro" id="intro">
 
-    <div class="intro-content">
+    <div class="intro-glow"></div>
 
-        <div class="intro-small">
-            Вам пришло приглашение
+    <div class="intro-inner">
+
+        <div class="intro-label">
+            Вам пришло AI-приглашение
         </div>
 
-        <div class="envelope" id="envelope">
+        <div class="glass-envelope" id="envelope">
 
-            <div class="envelope-back"></div>
+            <div class="env-back"></div>
 
-            <div class="envelope-paper">
-                <span>2 КҮНДҮК АКЫСЫЗ</span>
+            <div class="env-paper">
+                <small>2 КҮНДҮК АКЫСЫЗ</small>
                 <strong>AI SABAK</strong>
             </div>
 
-            <div class="envelope-flap"></div>
+            <div class="env-flap"></div>
 
-            <div class="envelope-front"></div>
-
-            <div class="envelope-seal">
+            <div class="env-seal">
                 AI
             </div>
 
         </div>
 
-        <div class="intro-hint">
-            Открыть приглашение
+        <div class="open-hint">
+            Нажми, чтобы открыть
         </div>
 
     </div>
@@ -882,430 +1181,654 @@ footer p {
 </div>
 
 
-<!-- MUSIC -->
+<!-- =========================
+     MUSIC
+========================= -->
 
 <audio id="music" loop preload="auto">
-    <source src="HOME%20Resonance.m4a" type="audio/mp4">
+    <source src="music.mp3" type="audio/mpeg">
 </audio>
 
 
-<!-- MAIN SITE -->
+<!-- =========================
+     HERO
+========================= -->
 
-<main class="site">
+<section class="hero">
 
-    <!-- HERO -->
+    <div class="orb orb-blue"></div>
+    <div class="orb orb-pink"></div>
 
-    <section class="hero">
+    <div class="container hero-content">
 
-        <div class="ai-grid"></div>
-        <div class="glow"></div>
+        <div class="top-pill">
+            <i></i>
+            AI • CONTENT • CINEMA
+        </div>
 
-        <div class="hero-content">
+        <h1 class="hero-title">
+            AI
+            <span>SABAK</span>
+        </h1>
 
-            <div class="eyebrow">
-                <i></i>
-                ONLINE • 2026
+        <p class="hero-subtitle">
+            2 күндүк акысыз сабак, анда сен нейросеттердин
+            мүмкүнчүлүктөрүн үйрөнүп, AI-контент түзүп,
+            идеяңды визуалга жана киного айлантууну көрөсүң.
+        </p>
+
+        <div class="hero-info">
+
+            <div class="info glass">
+                <small>ДАТА</small>
+                <strong>8–9 СЕНТЯБРЬ</strong>
             </div>
 
-            <h1>
-                AI
-                <span>SABAK</span>
-            </h1>
+            <div class="info glass">
+                <small>ВРЕМЯ</small>
+                <strong>11:00</strong>
+            </div>
 
-            <p class="hero-description">
-                2 күндүк акысыз сабак — нейросетей,
-                AI-контент жана анимация дүйнөсүнө
-                биринчи кадам.
-            </p>
-
-            <div class="hero-info">
-
-                <div class="info-card">
-                    <small>ДАТА</small>
-                    <strong>8–9 СЕНТЯБРЬ</strong>
-                </div>
-
-                <div class="info-card">
-                    <small>ВРЕМЯ</small>
-                    <strong>11:00</strong>
-                </div>
-
-                <div class="info-card">
-                    <small>ФОРМАТ</small>
-                    <strong>ONLINE</strong>
-                </div>
-
+            <div class="info glass">
+                <small>ФОРМАТ</small>
+                <strong>ONLINE</strong>
             </div>
 
         </div>
 
-        <div class="scroll">
-            SCROLL ↓
-        </div>
+    </div>
 
-    </section>
+    <div class="scroll-down">
+        SCROLL ↓
+    </div>
+
+</section>
 
 
-    <!-- AI -->
+<!-- =========================
+     AI WORLD
+========================= -->
 
-    <section class="ai-visual-section">
+<section class="ai-world">
 
-        <div class="ai-grid"></div>
-        <div class="glow"></div>
+    <div class="orb orb-blue"></div>
+    <div class="orb orb-lav"></div>
 
-        <div class="container">
+    <div class="container">
 
-            <div class="ai-visual-content">
+        <div class="ai-layout">
 
-                <div>
+            <div>
 
-                    <div class="section-label">
-                        THE FUTURE IS HERE
-                    </div>
-
-                    <h2 class="section-title">
-                        Нейросети<br>
-                        меняют правила.
-                    </h2>
-
-                    <p class="ai-text">
-                        За два дня мы погрузимся в мир искусственного
-                        интеллекта и посмотрим, как создавать
-                        современный AI-контент, работать с
-                        изображениями и оживлять идеи.
-                    </p>
-
+                <div class="kicker">
+                    THE NEW CREATIVE ERA
                 </div>
 
-                <div class="neural-orb">
-
-                    <div class="node"></div>
-                    <div class="node"></div>
-                    <div class="node"></div>
-                    <div class="node"></div>
-                    <div class="node"></div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- CALENDAR -->
-
-    <section class="calendar-section">
-
-        <div class="container center">
-
-            <div class="section-label">
-                SAVE THE DATE
-            </div>
-
-            <h2 class="section-title">
-                Запомни эти даты
-            </h2>
-
-            <p>
-                Два дня. Один старт. Новые возможности.
-            </p>
-
-            <div class="calendar">
-
-                <div class="calendar-head">
-                    <strong>Сентябрь 2026</strong>
-                    <span>AI SABAK</span>
-                </div>
-
-                <div class="days">
-                    <div>ПН</div>
-                    <div>ВТ</div>
-                    <div>СР</div>
-                    <div>ЧТ</div>
-                    <div>ПТ</div>
-                    <div>СБ</div>
-                    <div>ВС</div>
-                </div>
-
-                <div class="dates">
-
-                    <div></div>
-                    <div>1</div>
-                    <div>2</div>
-                    <div>3</div>
-                    <div>4</div>
-                    <div>5</div>
-                    <div>6</div>
-
-                    <div>7</div>
-                    <div class="event-day">8</div>
-                    <div class="event-day">9</div>
-                    <div>10</div>
-                    <div>11</div>
-                    <div>12</div>
-                    <div>13</div>
-
-                    <div>14</div>
-                    <div>15</div>
-                    <div>16</div>
-                    <div>17</div>
-                    <div>18</div>
-                    <div>19</div>
-                    <div>20</div>
-
-                    <div>21</div>
-                    <div>22</div>
-                    <div>23</div>
-                    <div>24</div>
-                    <div>25</div>
-                    <div>26</div>
-                    <div>27</div>
-
-                    <div>28</div>
-                    <div>29</div>
-                    <div>30</div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- COUNTDOWN -->
-
-    <section class="countdown-section">
-
-        <div class="container center">
-
-            <div class="section-label">
-                COUNTDOWN
-            </div>
-
-            <h2 class="section-title">
-                До встречи осталось
-            </h2>
-
-            <div class="countdown">
-
-                <div class="time-box">
-                    <strong id="days">00</strong>
-                    <span>дней</span>
-                </div>
-
-                <div class="time-box">
-                    <strong id="hours">00</strong>
-                    <span>часов</span>
-                </div>
-
-                <div class="time-box">
-                    <strong id="minutes">00</strong>
-                    <span>минут</span>
-                </div>
-
-                <div class="time-box">
-                    <strong id="seconds">00</strong>
-                    <span>секунд</span>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- PROGRAM -->
-
-    <section class="program-section">
-
-        <div class="container">
-
-            <div class="center">
-
-                <div class="section-label">
-                    PROGRAM
-                </div>
-
-                <h2 class="section-title">
-                    Два дня<br>
-                    новых знаний
+                <h2>
+                    Твоя идея.<br>
+                    AI сделает её реальностью.
                 </h2>
 
-            </div>
-
-            <div class="program-grid">
-
-                <div class="day-card">
-
-                    <div class="day-number">
-                        01 — 8 СЕНТЯБРЯ
-                    </div>
-
-                    <h3>1-күн</h3>
-
-                    <div class="program-item">
-                        <time>11:00</time>
-                        <p>Знакомство с AI и современными нейросетями</p>
-                    </div>
-
-                    <div class="program-item">
-                        <time>11:30</time>
-                        <p>Как создавать идеи и визуалы с помощью AI</p>
-                    </div>
-
-                    <div class="program-item">
-                        <time>12:00</time>
-                        <p>Практика: создаём свой AI-контент</p>
-                    </div>
-
-                </div>
-
-
-                <div class="day-card">
-
-                    <div class="day-number">
-                        02 — 9 СЕНТЯБРЯ
-                    </div>
-
-                    <h3>2-күн</h3>
-
-                    <div class="program-item">
-                        <time>11:00</time>
-                        <p>Анимация и оживление изображений</p>
-                    </div>
-
-                    <div class="program-item">
-                        <time>11:30</time>
-                        <p>Создание современного видео с AI</p>
-                    </div>
-
-                    <div class="program-item">
-                        <time>12:00</time>
-                        <p>Финальная практика и новые возможности</p>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- RSVP -->
-
-    <section class="rsvp-section">
-
-        <div class="container">
-
-            <div class="center">
-
-                <div class="section-label">
-                    RSVP
-                </div>
-
-                <h2 class="section-title">
-                    Катышасызбы?
-                </h2>
-
-                <p>
-                    Оставьте своё имя — мы будем ждать вас онлайн.
+                <p class="ai-description">
+                    Сегодня нейросети позволяют создавать изображения,
+                    видео, персонажей, истории и целые визуальные миры.
+                    За два дня мы разберёмся, как превратить AI
+                    из интересного инструмента в настоящий навык.
                 </p>
 
             </div>
 
+            <div class="neural-scene">
 
-            <div class="rsvp-box">
+                <div class="neural-card">
 
-                <label>
-                    Ваш ответ
-                </label>
+                    <div class="neural-ring"></div>
+                    <div class="neural-ring"></div>
+                    <div class="neural-ring"></div>
 
-                <div class="rsvp-options">
-
-                    <label class="rsvp-option">
-                        <input type="radio" name="attendance" value="yes" checked>
-                        <span>Ооба, катышам</span>
-                    </label>
-
-                    <label class="rsvp-option">
-                        <input type="radio" name="attendance" value="no">
-                        <span>Катыша албайм</span>
-                    </label>
+                    <div class="neural-dot d1"></div>
+                    <div class="neural-dot d2"></div>
+                    <div class="neural-dot d3"></div>
+                    <div class="neural-dot d4"></div>
+                    <div class="neural-dot d5"></div>
 
                 </div>
-
-
-                <label>
-                    Ваше имя
-                </label>
-
-                <input
-                    class="name-input"
-                    id="guestName"
-                    type="text"
-                    placeholder="Введите имя"
-                >
-
-
-                <div class="guests">
-
-                    <label style="margin:0;">
-                        Количество участников
-                    </label>
-
-                    <div class="guest-controls">
-
-                        <button class="guest-btn" onclick="changeGuests(-1)">
-                            −
-                        </button>
-
-                        <strong id="guestCount">1</strong>
-
-                        <button class="guest-btn" onclick="changeGuests(1)">
-                            +
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <button class="submit" onclick="submitRSVP()">
-                    Подтвердить участие
-                </button>
 
             </div>
 
         </div>
 
-    </section>
+    </div>
+
+</section>
 
 
-    <!-- FOOTER -->
+<!-- =========================
+     LEARNING
+========================= -->
 
-    <footer>
+<section class="learn">
 
-        <strong>AI SABAK</strong>
+    <div class="container">
 
-        <p>
-            8–9 СЕНТЯБРЬ 2026 • 11:00 • ONLINE
+        <div class="learn-head center">
+
+            <div class="kicker">
+                WHAT YOU WILL LEARN
+            </div>
+
+            <h2>
+                4 направления<br>
+                одного AI-мира
+            </h2>
+
+            <p>
+                Не просто посмотреть на нейросети,
+                а увидеть, что с ними можно создавать
+                и как применять их в реальной работе.
+            </p>
+
+        </div>
+
+
+        <div class="learn-grid">
+
+            <div class="learn-card">
+
+                <div class="card-number">01 / AI MONEY</div>
+
+                <h3>AI-заработок</h3>
+
+                <p>
+                    Как использовать AI для создания услуг,
+                    контента, работы с клиентами и новых
+                    возможностей для дохода.
+                </p>
+
+                <div class="card-orb"></div>
+
+            </div>
+
+
+            <div class="learn-card">
+
+                <div class="card-number">02 / AI CONTENT</div>
+
+                <h3>AI-контент</h3>
+
+                <p>
+                    Создание красивых изображений,
+                    визуалов, идей и контента для
+                    социальных сетей.
+                </p>
+
+                <div class="card-orb"></div>
+
+            </div>
+
+
+            <div class="learn-card">
+
+                <div class="card-number">03 / LOVE STORY</div>
+
+                <h3>AI Love Story</h3>
+
+                <p>
+                    Превращаем историю в визуальный сюжет:
+                    персонажи, романтические сцены,
+                    эмоции и storytelling.
+                </p>
+
+                <div class="card-orb"></div>
+
+            </div>
+
+
+            <div class="learn-card">
+
+                <div class="card-number">04 / AI CINEMA</div>
+
+                <h3>AI Cinema</h3>
+
+                <p>
+                    Киношные кадры, мультфильмы,
+                    персонажи, анимация и создание
+                    собственного AI-видео.
+                </p>
+
+                <div class="card-orb"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CINEMA
+========================= -->
+
+<section class="cinema">
+
+    <div class="container">
+
+        <div class="kicker center">
+            FROM IDEA TO CINEMA
+        </div>
+
+        <h2 class="center">
+            Представь.<br>
+            Ты создаёшь свой фильм.
+        </h2>
+
+        <p class="cinema-intro">
+            От одной идеи до полноценной визуальной истории —
+            персонажи, атмосфера, кадры, движение и эмоции.
         </p>
 
-    </footer>
 
-</main>
+        <div class="cinema-stage">
+
+            <div class="stage-moon"></div>
+
+            <div class="stage-arc"></div>
+
+            <div class="stage-card">
+
+                <span>AI CINEMATIC STORY</span>
+
+                <h3>
+                    IDEA → IMAGE → MOTION
+                </h3>
+
+                <p>
+                    Создавай сцены, которые раньше
+                    существовали только в воображении.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     TWO DAYS
+========================= -->
+
+<section class="days-section">
+
+    <div class="container">
+
+        <div class="center">
+
+            <div class="kicker">
+                2 DAYS / 2 WORLDS
+            </div>
+
+            <h2>
+                Два дня.<br>
+                Максимум практики.
+            </h2>
+
+        </div>
+
+
+        <div class="days-grid">
+
+            <div class="day day-one">
+
+                <small>
+                    DAY 01 — 8 СЕНТЯБРЯ
+                </small>
+
+                <h3>
+                    AI Content
+                </h3>
+
+                <div class="lesson">
+                    <b>01</b>
+                    <p>Знакомство с AI и нейросетями</p>
+                </div>
+
+                <div class="lesson">
+                    <b>02</b>
+                    <p>Создание AI-фото и визуалов</p>
+                </div>
+
+                <div class="lesson">
+                    <b>03</b>
+                    <p>AI-контент для социальных сетей</p>
+                </div>
+
+                <div class="lesson">
+                    <b>04</b>
+                    <p>Как AI может помочь в заработке</p>
+                </div>
+
+            </div>
+
+
+            <div class="day day-two">
+
+                <small>
+                    DAY 02 — 9 СЕНТЯБРЯ
+                </small>
+
+                <h3>
+                    AI Cinema
+                </h3>
+
+                <div class="lesson">
+                    <b>01</b>
+                    <p>AI Love Story</p>
+                </div>
+
+                <div class="lesson">
+                    <b>02</b>
+                    <p>Создание персонажей</p>
+                </div>
+
+                <div class="lesson">
+                    <b>03</b>
+                    <p>Анимация и движение</p>
+                </div>
+
+                <div class="lesson">
+                    <b>04</b>
+                    <p>Киношные кадры и AI-видео</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     CALENDAR
+========================= -->
+
+<section class="calendar-section">
+
+    <div class="container center">
+
+        <div class="kicker">
+            SAVE THE DATE
+        </div>
+
+        <h2>
+            8–9 сентября
+        </h2>
+
+        <p style="margin-top:20px;color:#777;">
+            Начинаем в 11:00 • ONLINE
+        </p>
+
+
+        <div class="calendar glass">
+
+            <div class="calendar-top">
+                <strong>Сентябрь 2026</strong>
+                <span>AI SABAK</span>
+            </div>
+
+            <div class="week">
+                <div>ПН</div>
+                <div>ВТ</div>
+                <div>СР</div>
+                <div>ЧТ</div>
+                <div>ПТ</div>
+                <div>СБ</div>
+                <div>ВС</div>
+            </div>
+
+            <div class="numbers">
+
+                <div></div>
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+                <div>4</div>
+                <div>5</div>
+                <div>6</div>
+
+                <div>7</div>
+                <div class="event">8</div>
+                <div class="event">9</div>
+                <div>10</div>
+                <div>11</div>
+                <div>12</div>
+                <div>13</div>
+
+                <div>14</div>
+                <div>15</div>
+                <div>16</div>
+                <div>17</div>
+                <div>18</div>
+                <div>19</div>
+                <div>20</div>
+
+                <div>21</div>
+                <div>22</div>
+                <div>23</div>
+                <div>24</div>
+                <div>25</div>
+                <div>26</div>
+                <div>27</div>
+
+                <div>28</div>
+                <div>29</div>
+                <div>30</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     COUNTDOWN
+========================= -->
+
+<section class="countdown-section">
+
+    <div class="container center">
+
+        <div class="kicker">
+            COUNTDOWN
+        </div>
+
+        <h2>
+            До старта
+        </h2>
+
+        <div class="countdown">
+
+            <div class="count-box glass">
+                <strong id="days">00</strong>
+                <span>дней</span>
+            </div>
+
+            <div class="count-box glass">
+                <strong id="hours">00</strong>
+                <span>часов</span>
+            </div>
+
+            <div class="count-box glass">
+                <strong id="minutes">00</strong>
+                <span>минут</span>
+            </div>
+
+            <div class="count-box glass">
+                <strong id="seconds">00</strong>
+                <span>секунд</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     RSVP
+========================= -->
+
+<section class="rsvp">
+
+    <div class="container">
+
+        <div class="center">
+
+            <div class="kicker">
+                RSVP
+            </div>
+
+            <h2>
+                Катышасызбы?
+            </h2>
+
+            <p style="margin-top:20px;color:#747b7e;">
+                Оставь свой ответ — будем ждать тебя онлайн.
+            </p>
+
+        </div>
+
+
+        <div class="rsvp-box glass">
+
+            <label class="title">
+                Ваш ответ
+            </label>
+
+            <div class="options">
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="attendance"
+                        value="yes"
+                        checked
+                    >
+
+                    <span>
+                        Ооба, катышам
+                    </span>
+
+                </label>
+
+
+                <label class="option">
+
+                    <input
+                        type="radio"
+                        name="attendance"
+                        value="no"
+                    >
+
+                    <span>
+                        Катыша албайм
+                    </span>
+
+                </label>
+
+            </div>
+
+
+            <label class="title">
+                Ваше имя
+            </label>
+
+            <input
+                class="name"
+                id="guestName"
+                type="text"
+                placeholder="Введите имя"
+            >
+
+
+            <div class="guests">
+
+                <div class="guests-title">
+                    Количество участников
+                </div>
+
+                <div class="guest-controls">
+
+                    <button
+                        class="guest-btn"
+                        onclick="changeGuests(-1)"
+                    >
+                        −
+                    </button>
+
+                    <strong id="guestCount">
+                        1
+                    </strong>
+
+                    <button
+                        class="guest-btn"
+                        onclick="changeGuests(1)"
+                    >
+                        +
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <button
+                class="submit"
+                onclick="submitRSVP()"
+            >
+                Подтвердить участие
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================
+     FOOTER
+========================= -->
+
+<footer>
+
+    <h3>AI SABAK</h3>
+
+    <p>
+        8–9 SEPTEMBER 2026 • 11:00 • ONLINE
+    </p>
+
+</footer>
 
 
 <!-- MUSIC BUTTON -->
 
-<button class="music-btn" id="musicBtn" onclick="toggleMusic()">
+<button
+    class="music"
+    id="musicBtn"
+    onclick="toggleMusic()"
+>
     ♫
 </button>
 
@@ -1313,69 +1836,80 @@ footer p {
 <script>
 
 /* =========================
-   ENVELOPE + MUSIC
+   OPEN ENVELOPE
 ========================= */
 
-const envelope = document.getElementById('envelope');
-const intro = document.getElementById('intro');
-const music = document.getElementById('music');
-const musicBtn = document.getElementById('musicBtn');
+const envelope =
+    document.getElementById("envelope");
+
+const intro =
+    document.getElementById("intro");
+
+const music =
+    document.getElementById("music");
+
+const musicBtn =
+    document.getElementById("musicBtn");
 
 let opened = false;
-let musicPlaying = false;
 
-envelope.addEventListener('click', function() {
 
-    if (opened) return;
+envelope.addEventListener("click", function(){
+
+    if(opened) return;
 
     opened = true;
 
-    envelope.classList.add('open');
+    envelope.classList.add("open");
 
     /*
-       Музыка запускается именно после
-       клика пользователя — поэтому браузер
-       разрешает воспроизведение.
+       Музыка запускается после клика пользователя.
     */
 
-    music.volume = 0.45;
+    music.volume = 0.5;
 
     music.play()
-        .then(() => {
-            musicPlaying = true;
-            musicBtn.innerHTML = '♫';
+        .then(function(){
+
+            musicBtn.innerHTML = "♫";
+
         })
-        .catch(() => {
-            musicPlaying = false;
+        .catch(function(){
+
+            musicBtn.innerHTML = "♪";
+
         });
 
-    setTimeout(() => {
-        intro.classList.add('hide');
-        document.body.style.overflow = 'auto';
-    }, 1500);
+
+    setTimeout(function(){
+
+        intro.classList.add("hide");
+
+    },1500);
 
 });
 
 
 /* =========================
-   MUSIC
+   MUSIC BUTTON
 ========================= */
 
-function toggleMusic() {
+function toggleMusic(){
 
-    if (music.paused) {
+    if(music.paused){
 
         music.play()
-            .then(() => {
-                musicPlaying = true;
-                musicBtn.innerHTML = '♫';
+            .then(function(){
+
+                musicBtn.innerHTML = "♫";
+
             });
 
-    } else {
+    }else{
 
         music.pause();
-        musicPlaying = false;
-        musicBtn.innerHTML = '♪';
+
+        musicBtn.innerHTML = "♪";
 
     }
 
@@ -1386,14 +1920,20 @@ function toggleMusic() {
    COUNTDOWN
 ========================= */
 
-const targetDate = new Date("2026-09-08T11:00:00+06:00").getTime();
+const target =
+    new Date("2026-09-08T11:00:00+06:00").getTime();
 
-function updateCountdown() {
 
-    const now = new Date().getTime();
-    const difference = targetDate - now;
+function updateCountdown(){
 
-    if (difference <= 0) {
+    const now =
+        new Date().getTime();
+
+    const difference =
+        target - now;
+
+
+    if(difference <= 0){
 
         document.getElementById("days").innerText = "00";
         document.getElementById("hours").innerText = "00";
@@ -1403,51 +1943,76 @@ function updateCountdown() {
         return;
     }
 
-    const days = Math.floor(difference / (1000 * 60 * 60 * 24));
 
-    const hours = Math.floor(
-        (difference / (1000 * 60 * 60)) % 24
-    );
+    const days =
+        Math.floor(
+            difference /
+            (1000 * 60 * 60 * 24)
+        );
 
-    const minutes = Math.floor(
-        (difference / (1000 * 60)) % 60
-    );
 
-    const seconds = Math.floor(
-        (difference / 1000) % 60
-    );
+    const hours =
+        Math.floor(
+            (difference /
+            (1000 * 60 * 60)) % 24
+        );
+
+
+    const minutes =
+        Math.floor(
+            (difference /
+            (1000 * 60)) % 60
+        );
+
+
+    const seconds =
+        Math.floor(
+            (difference / 1000) % 60
+        );
+
 
     document.getElementById("days").innerText =
-        String(days).padStart(2, "0");
+        String(days).padStart(2,"0");
 
     document.getElementById("hours").innerText =
-        String(hours).padStart(2, "0");
+        String(hours).padStart(2,"0");
 
     document.getElementById("minutes").innerText =
-        String(minutes).padStart(2, "0");
+        String(minutes).padStart(2,"0");
 
     document.getElementById("seconds").innerText =
-        String(seconds).padStart(2, "0");
+        String(seconds).padStart(2,"0");
+
 }
 
+
 updateCountdown();
-setInterval(updateCountdown, 1000);
+
+setInterval(updateCountdown,1000);
 
 
 /* =========================
-   GUEST COUNT
+   GUESTS
 ========================= */
 
 let guests = 1;
 
-function changeGuests(value) {
+
+function changeGuests(value){
 
     guests += value;
 
-    if (guests < 1) guests = 1;
-    if (guests > 10) guests = 10;
+    if(guests < 1){
+        guests = 1;
+    }
 
-    document.getElementById("guestCount").innerText = guests;
+    if(guests > 10){
+        guests = 10;
+    }
+
+    document.getElementById("guestCount")
+        .innerText = guests;
+
 }
 
 
@@ -1455,32 +2020,49 @@ function changeGuests(value) {
    RSVP
 ========================= */
 
-function submitRSVP() {
+function submitRSVP(){
 
-    const name = document.getElementById("guestName").value.trim();
+    const name =
+        document
+        .getElementById("guestName")
+        .value
+        .trim();
+
 
     const attendance =
-        document.querySelector('input[name="attendance"]:checked').value;
+        document
+        .querySelector(
+            'input[name="attendance"]:checked'
+        )
+        .value;
 
-    if (!name) {
 
-        alert("Пожалуйста, введите ваше имя.");
+    if(!name){
+
+        alert(
+            "Пожалуйста, введите ваше имя."
+        );
 
         return;
     }
 
-    if (attendance === "yes") {
+
+    if(attendance === "yes"){
 
         alert(
-            "Спасибо, " + name +
-            "! ❤️\n\n" +
-            "Мы ждём вас на AI SABAK 8–9 сентября в 11:00."
+            "Спасибо, " +
+            name +
+            "! ✨\n\n" +
+            "Мы ждём вас на AI SABAK " +
+            "8–9 сентября в 11:00."
         );
 
-    } else {
+    }else{
 
         alert(
-            "Спасибо за ответ, " + name + "!"
+            "Спасибо за ответ, " +
+            name +
+            "! ❤️"
         );
 
     }
